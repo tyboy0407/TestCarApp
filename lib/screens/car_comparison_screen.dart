@@ -14,10 +14,10 @@ class CarComparisonScreen extends StatefulWidget {
 
 class _CarComparisonScreenState extends State<CarComparisonScreen> {
   String? _selectedBrand1;
-  Vehicle? _selectedVehicle1;
+  String? _selectedVehicleId1;
   
   String? _selectedBrand2;
-  Vehicle? _selectedVehicle2;
+  String? _selectedVehicleId2;
 
   final NumberFormat _currencyFormat = NumberFormat.currency(locale: 'zh_TW', symbol: '\$', decimalDigits: 0);
 
@@ -35,6 +35,32 @@ class _CarComparisonScreenState extends State<CarComparisonScreen> {
     final vehicleProvider = Provider.of<VehicleProvider>(context);
     final vehicles = vehicleProvider.vehicles;
     final brands = _getUniqueBrands(vehicles);
+
+    // Resolve Vehicle 1
+    Vehicle? selectedVehicle1;
+    if (_selectedVehicleId1 != null) {
+      try {
+        selectedVehicle1 = vehicles.firstWhere((v) => v.id == _selectedVehicleId1);
+      } catch (_) {
+        _selectedVehicleId1 = null;
+      }
+    }
+    // Determine effective brand for 1 (If vehicle is selected, force its brand)
+    String? effectiveBrand1 = selectedVehicle1?.brand ?? _selectedBrand1;
+
+
+    // Resolve Vehicle 2
+    Vehicle? selectedVehicle2;
+    if (_selectedVehicleId2 != null) {
+      try {
+        selectedVehicle2 = vehicles.firstWhere((v) => v.id == _selectedVehicleId2);
+      } catch (_) {
+        _selectedVehicleId2 = null;
+      }
+    }
+    // Determine effective brand for 2
+    String? effectiveBrand2 = selectedVehicle2?.brand ?? _selectedBrand2;
+
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
@@ -68,17 +94,19 @@ class _CarComparisonScreenState extends State<CarComparisonScreen> {
                     label: '車輛 A',
                     allVehicles: vehicles,
                     brands: brands,
-                    selectedBrand: _selectedBrand1,
-                    selectedVehicle: _selectedVehicle1,
+                    selectedBrand: effectiveBrand1,
+                    selectedVehicle: selectedVehicle1,
                     onBrandChanged: (val) {
                       setState(() {
                         _selectedBrand1 = val;
-                        _selectedVehicle1 = null;
+                        _selectedVehicleId1 = null;
                       });
                     },
                     onVehicleChanged: (val) {
                       setState(() {
-                        _selectedVehicle1 = val;
+                        _selectedVehicleId1 = val?.id;
+                        // Also sync brand just in case
+                        if (val != null) _selectedBrand1 = val.brand;
                       });
                     },
                   ),
@@ -96,17 +124,18 @@ class _CarComparisonScreenState extends State<CarComparisonScreen> {
                     label: '車輛 B',
                     allVehicles: vehicles,
                     brands: brands,
-                    selectedBrand: _selectedBrand2,
-                    selectedVehicle: _selectedVehicle2,
+                    selectedBrand: effectiveBrand2,
+                    selectedVehicle: selectedVehicle2,
                     onBrandChanged: (val) {
                       setState(() {
                         _selectedBrand2 = val;
-                        _selectedVehicle2 = null;
+                        _selectedVehicleId2 = null;
                       });
                     },
                     onVehicleChanged: (val) {
                       setState(() {
-                        _selectedVehicle2 = val;
+                        _selectedVehicleId2 = val?.id;
+                         if (val != null) _selectedBrand2 = val.brand;
                       });
                     },
                   ),
@@ -116,8 +145,8 @@ class _CarComparisonScreenState extends State<CarComparisonScreen> {
 
             const SizedBox(height: 24),
             // Comparison Table
-            if (_selectedVehicle1 != null && _selectedVehicle2 != null)
-              _buildComparisonTable(_selectedVehicle1!, _selectedVehicle2!)
+            if (selectedVehicle1 != null && selectedVehicle2 != null)
+              _buildComparisonTable(selectedVehicle1, selectedVehicle2)
             else
               const Center(
                 child: Padding(
