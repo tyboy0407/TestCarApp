@@ -1,0 +1,38 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+# 允許此 workflow 修改儲存庫內容 (為了發布 gh-pages 分支)
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          # 使用與您本地相近的版本，或由 action 自動抓取最新 stable
+          flutter-version: '3.19.x'
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # 編譯網頁版，並設定正確的 base-href (重要！)
+      - name: Build Web
+        run: flutter build web --release --base-href "/TestCarApp/"
+
+      # 部署到 GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build/web
