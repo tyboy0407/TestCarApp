@@ -22,6 +22,15 @@ class EvaluationProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void setImportanceBudget(double val) { _needs.importanceBudget = val; notifyListeners(); }
+  void setImportanceSpace(double val) { _needs.importanceSpace = val; notifyListeners(); }
+  void setImportanceFuel(double val) { _needs.importanceFuel = val; notifyListeners(); }
+  void setImportancePower(double val) { _needs.importancePower = val; notifyListeners(); }
+  void setImportanceSafety(double val) { _needs.importanceSafety = val; notifyListeners(); }
+  void setImportanceComfort(double val) { _needs.importanceComfort = val; notifyListeners(); }
+  void setImportanceResale(double val) { _needs.importanceResale = val; notifyListeners(); }
+  void setImportanceTech(double val) { _needs.importanceTech = val; notifyListeners(); } // New
+
   // --- 財務相關操作 ---
   
   // 更新車價
@@ -48,9 +57,9 @@ class EvaluationProvider with ChangeNotifier {
     notifyListeners();
   }
   
-  // 更新年里程
-  void setAnnualMileage(double mileage) {
-    _financial.annualMileage = mileage;
+  // 更新月里程
+  void setMonthlyMileage(double mileage) {
+    _financial.monthlyMileage = mileage;
     notifyListeners();
   }
 
