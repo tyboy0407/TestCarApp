@@ -21,7 +21,7 @@ jobs:
         with:
           channel: 'stable'
           # 使用與您本地相近的版本，或由 action 自動抓取最新 stable
-          #flutter-version: '3.29.0'
+          flutter-version: 'any'
 
       - name: Install Dependencies
         run: flutter pub get
