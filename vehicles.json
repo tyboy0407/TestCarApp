@@ -85,7 +85,7 @@
   },
   {
     "id": "v5",
-    "brand": "Kian",
+    "brand": "Kia",
     "model": "Stonic 1.0T 智慧油電 GT-line",
     "price": 889000,
     "displacement": 998,
@@ -103,5 +103,47 @@
       "照後鏡": 7500
     },
     "reliabilityScore": 88
+  },
+  {
+    "id": "v6",
+    "brand": "Hyundai",
+    "model": "Venue GLB 雙色版",
+    "price": 769000,
+    "displacement": 1598,
+    "horsepower": 123.0,
+    "torque": 15.7,
+    "avgFuelConsumption": 17.1,
+    "transmission": "IVT 智慧無段變速（模擬 8 速手自排）",
+    "frontSuspension": "麥花臣式",
+    "rearSuspension": "扭力樑式",
+    "engineType": "自然進氣直列 4 缸",
+    "maintenanceCost60k": 22000,
+    "partsPrices": {
+      "前保桿": 4500,
+      "頭燈總成": 12000,
+      "照後鏡": 4200
+    },
+    "reliabilityScore": 91
+  },
+  {
+    "id": "v7",
+    "brand": "Nissan",
+    "model": "Kicks e-Power",
+    "price": 1049000,
+    "displacement": 1198,
+    "horsepower": 136.0,
+    "torque": 28.5,
+    "avgFuelConsumption": 22.0,
+    "transmission": "單速固定齒輪比（電動馬達驅動）",
+    "frontSuspension": "麥花臣式",
+    "rearSuspension": "扭力桿式",
+    "engineType": "e-Power 串聯式油電系統（1.2L 引擎發電）",
+    "maintenanceCost60k": 28000,
+    "partsPrices": {
+      "前保桿": 6500,
+      "頭燈總成": 28000,
+      "照後鏡": 6800
+    },
+    "reliabilityScore": 89
   }
 ]
