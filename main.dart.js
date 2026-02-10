@@ -93152,7 +93152,7 @@ q=3
 s=6
 return A.X(n.yG(),$async$oV)
 case 6:s=7
-return A.X(A.aXU(A.im("https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/vehicles.json")).L6(B.Io),$async$oV)
+return A.X(A.aXU(A.im("https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/vehicles.json?t="+Date.now())).L6(B.Io),$async$oV)
 case 7:m=a1
 if(m.b===200){f=m
 l=B.bg.ex(A.aXD(A.aVo(f.e)).ex(f.w))
@@ -93161,14 +93161,14 @@ e=J.kA(l,new A.akE(),f)
 d=A.Z(e,e.$ti.h("aj.E"))
 k=d
 j=A.w(t.N,f)
-for(f=k,e=f.length,c=0;c<f.length;f.length===e||(0,A.B)(f),++c){i=f[c]
-J.kx(j,i.a,i)}for(f=n.a,e=f.length,c=0;c<f.length;f.length===e||(0,A.B)(f),++c){h=f[c]
+for(f=n.a,e=f.length,c=0;c<f.length;f.length===e||(0,A.B)(f),++c){i=f[c]
+J.kx(j,i.a,i)}for(f=k,e=f.length,c=0;c<f.length;f.length===e||(0,A.B)(f),++c){h=f[c]
 J.kx(j,h.a,h)}f=j
 e=A.k(f).h("b4<2>")
 f=A.Z(new A.b4(f,e),e.h("y.E"))
 n.a=f
 n.e=new A.eR(Date.now(),0,!1)
-A.mi("Vehicle data merged with remote source.")}o.push(5)
+A.mi("Vehicle data merged with remote source (Cache Busted).")}o.push(5)
 s=4
 break
 case 3:q=2
