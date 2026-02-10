@@ -141,6 +141,13 @@ class VehicleProvider with ChangeNotifier {
     }
   }
 
+  // Use a dynamic URL that works for both local development and deployed web/mobile
+  String get _dynamicDataUrl {
+    // Add a timestamp to bypass browser cache
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    return '$_dataUrl?t=$timestamp';
+  }
+
   Future<void> fetchVehicles() async {
     _isLoading = true;
     _error = null;
@@ -150,30 +157,30 @@ class VehicleProvider with ChangeNotifier {
       // 1. Load from local assets first
       await _loadFromAssets();
 
-      // 2. Attempt to fetch from remote and merge
-      final response = await http.get(Uri.parse(_dataUrl)).timeout(const Duration(seconds: 5));
+      // 2. Attempt to fetch from remote (with cache busting)
+      final response = await http.get(Uri.parse(_dynamicDataUrl)).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         final List<dynamic> remoteData = json.decode(response.body);
         final List<Vehicle> remoteList = remoteData.map((json) => Vehicle.fromJson(json)).toList();
         
-        // Merge strategy: Use a Map to de-duplicate by ID, prioritizing local/current data
+        // Merge strategy: Use a Map to de-duplicate by ID, prioritizing the freshest data
         final Map<String, Vehicle> mergedMap = {};
         
-        // Add remote vehicles first
-        for (var v in remoteList) {
+        // Start with current list (which contains fallback + local assets)
+        for (var v in _remoteVehicles) {
           mergedMap[v.id] = v;
         }
         
-        // Add/Overwrite with local vehicles (treating local changes as priority)
-        for (var v in _remoteVehicles) {
+        // Add/Overwrite with remote vehicles
+        for (var v in remoteList) {
           mergedMap[v.id] = v;
         }
 
         _remoteVehicles = mergedMap.values.toList();
         _lastFetchTime = DateTime.now();
         _error = null;
-        print('Vehicle data merged with remote source.');
+        print('Vehicle data merged with remote source (Cache Busted).');
       } 
     } catch (e) {
       print('Remote fetch failed or timed out: $e. Using local data.');
