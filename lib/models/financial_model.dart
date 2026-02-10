@@ -30,6 +30,38 @@ class FinancialModel {
     this.otherCosts = 0,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'vehiclePrice': vehiclePrice,
+      'downPayment': downPayment,
+      'loanTermMonths': loanTermMonths,
+      'interestRate': interestRate,
+      'monthlyMileage': monthlyMileage,
+      'fuelEfficiency': fuelEfficiency,
+      'energyPrice': energyPrice,
+      'tax': tax,
+      'maintenance': maintenance,
+      'insurance': insurance,
+      'otherCosts': otherCosts,
+    };
+  }
+
+  factory FinancialModel.fromJson(Map<String, dynamic> json) {
+    return FinancialModel(
+      vehiclePrice: (json['vehiclePrice'] as num?)?.toDouble() ?? 100.0,
+      downPayment: (json['downPayment'] as num?)?.toDouble() ?? 20.0,
+      loanTermMonths: json['loanTermMonths'] as int? ?? 60,
+      interestRate: (json['interestRate'] as num?)?.toDouble() ?? 2.5,
+      monthlyMileage: (json['monthlyMileage'] as num?)?.toDouble() ?? 1250,
+      fuelEfficiency: (json['fuelEfficiency'] as num?)?.toDouble() ?? 15.0,
+      energyPrice: (json['energyPrice'] as num?)?.toDouble() ?? 30.0,
+      tax: (json['tax'] as num?)?.toDouble() ?? 11920,
+      maintenance: (json['maintenance'] as num?)?.toDouble() ?? 10000,
+      insurance: (json['insurance'] as num?)?.toDouble() ?? 20000,
+      otherCosts: (json['otherCosts'] as num?)?.toDouble() ?? 0,
+    );
+  }
+
   // 貸款金額 (萬)
   double get loanAmount => vehiclePrice - downPayment;
 

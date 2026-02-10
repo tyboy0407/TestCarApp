@@ -59,6 +59,37 @@ class NeedsModel {
 
   NeedsModel({this.selectedUsage, this.preferredPowertrain});
 
+  Map<String, dynamic> toJson() {
+    return {
+      'selectedUsage': selectedUsage?.index,
+      'preferredPowertrain': preferredPowertrain?.index,
+      'importanceBudget': importanceBudget,
+      'importanceSpace': importanceSpace,
+      'importanceFuel': importanceFuel,
+      'importancePower': importancePower,
+      'importanceSafety': importanceSafety,
+      'importanceComfort': importanceComfort,
+      'importanceResale': importanceResale,
+      'importanceTech': importanceTech,
+    };
+  }
+
+  factory NeedsModel.fromJson(Map<String, dynamic> json) {
+    final model = NeedsModel(
+      selectedUsage: json['selectedUsage'] != null ? UsageType.values[json['selectedUsage']] : null,
+      preferredPowertrain: json['preferredPowertrain'] != null ? PowertrainType.values[json['preferredPowertrain']] : null,
+    );
+    model.importanceBudget = (json['importanceBudget'] as num?)?.toDouble() ?? 3.0;
+    model.importanceSpace = (json['importanceSpace'] as num?)?.toDouble() ?? 3.0;
+    model.importanceFuel = (json['importanceFuel'] as num?)?.toDouble() ?? 3.0;
+    model.importancePower = (json['importancePower'] as num?)?.toDouble() ?? 3.0;
+    model.importanceSafety = (json['importanceSafety'] as num?)?.toDouble() ?? 3.0;
+    model.importanceComfort = (json['importanceComfort'] as num?)?.toDouble() ?? 3.0;
+    model.importanceResale = (json['importanceResale'] as num?)?.toDouble() ?? 3.0;
+    model.importanceTech = (json['importanceTech'] as num?)?.toDouble() ?? 3.0;
+    return model;
+  }
+
   // Internal Database of Cars
   static const List<_CarProfile> _carDatabase = [
     _CarProfile(name: 'Honda HR-V e:HEV', axis: 'A', type: PowertrainType.hybrid, scoreBudget: 3, scoreSpace: 5, scoreFuel: 4, scorePower: 3, scoreSafety: 4, scoreComfort: 3, scoreResale: 4, scoreTech: 3),

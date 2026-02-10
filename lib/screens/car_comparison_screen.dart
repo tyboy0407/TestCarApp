@@ -63,6 +63,28 @@ class _CarComparisonScreenState extends State<CarComparisonScreen> {
 
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('車輛比較'),
+        actions: [
+          if (vehicleProvider.isLoading)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                ),
+              ),
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              tooltip: '更新資料',
+              onPressed: () => vehicleProvider.fetchVehicles(),
+            ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
@@ -73,91 +95,103 @@ class _CarComparisonScreenState extends State<CarComparisonScreen> {
         label: const Text('自訂'),
         icon: const Icon(Icons.add),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              '車輛規格與成本比較',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            
-            // Selection Area
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: _buildVehicleSelectorGroup(
-                    label: '車輛 A',
-                    allVehicles: vehicles,
-                    brands: brands,
-                    selectedBrand: effectiveBrand1,
-                    selectedVehicle: selectedVehicle1,
-                    onBrandChanged: (val) {
-                      setState(() {
-                        _selectedBrand1 = val;
-                        _selectedVehicleId1 = null;
-                      });
-                    },
-                    onVehicleChanged: (val) {
-                      setState(() {
-                        _selectedVehicleId1 = val?.id;
-                        // Also sync brand just in case
-                        if (val != null) _selectedBrand1 = val.brand;
-                      });
-                    },
-                  ),
-                ),
-                
-                const SizedBox(width: 8),
+      body: RefreshIndicator(
+        onRefresh: () => vehicleProvider.fetchVehicles(),
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (vehicleProvider.lastFetchTime != null)
                 Padding(
-                  padding: const EdgeInsets.only(top: 30.0),
-                  child: const Icon(Icons.compare_arrows, color: Colors.grey),
-                ),
-                const SizedBox(width: 8),
-
-                Expanded(
-                  child: _buildVehicleSelectorGroup(
-                    label: '車輛 B',
-                    allVehicles: vehicles,
-                    brands: brands,
-                    selectedBrand: effectiveBrand2,
-                    selectedVehicle: selectedVehicle2,
-                    onBrandChanged: (val) {
-                      setState(() {
-                        _selectedBrand2 = val;
-                        _selectedVehicleId2 = null;
-                      });
-                    },
-                    onVehicleChanged: (val) {
-                      setState(() {
-                        _selectedVehicleId2 = val?.id;
-                         if (val != null) _selectedBrand2 = val.brand;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-            // Comparison Table
-            if (selectedVehicle1 != null && selectedVehicle2 != null)
-              _buildComparisonTable(selectedVehicle1, selectedVehicle2)
-            else
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(32.0),
+                  padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(
-                    '請完整選擇兩台車輛以進行比較',
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                    '最後更新: ${DateFormat('yyyy/MM/dd HH:mm').format(vehicleProvider.lastFetchTime!)}',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    textAlign: TextAlign.right,
                   ),
                 ),
+              const Text(
+                '車輛規格與成本比較',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
               ),
-          ],
+              const SizedBox(height: 16),
+              
+              // Selection Area
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _buildVehicleSelectorGroup(
+                      label: '車輛 A',
+                      allVehicles: vehicles,
+                      brands: brands,
+                      selectedBrand: effectiveBrand1,
+                      selectedVehicle: selectedVehicle1,
+                      onBrandChanged: (val) {
+                        setState(() {
+                          _selectedBrand1 = val;
+                          _selectedVehicleId1 = null;
+                        });
+                      },
+                      onVehicleChanged: (val) {
+                        setState(() {
+                          _selectedVehicleId1 = val?.id;
+                          if (val != null) _selectedBrand1 = val.brand;
+                        });
+                      },
+                    ),
+                  ),
+                  
+                  const SizedBox(width: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30.0),
+                    child: const Icon(Icons.compare_arrows, color: Colors.grey),
+                  ),
+                  const SizedBox(width: 8),
+
+                  Expanded(
+                    child: _buildVehicleSelectorGroup(
+                      label: '車輛 B',
+                      allVehicles: vehicles,
+                      brands: brands,
+                      selectedBrand: effectiveBrand2,
+                      selectedVehicle: selectedVehicle2,
+                      onBrandChanged: (val) {
+                        setState(() {
+                          _selectedBrand2 = val;
+                          _selectedVehicleId2 = null;
+                        });
+                      },
+                      onVehicleChanged: (val) {
+                        setState(() {
+                          _selectedVehicleId2 = val?.id;
+                          if (val != null) _selectedBrand2 = val.brand;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 24),
+              // Comparison Table
+              if (selectedVehicle1 != null && selectedVehicle2 != null)
+                _buildComparisonTable(selectedVehicle1, selectedVehicle2)
+              else
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(32.0),
+                    child: Text(
+                      '請完整選擇兩台車輛以進行比較',
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
