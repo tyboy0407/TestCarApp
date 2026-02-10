@@ -1,0 +1,86 @@
+[
+  {
+    "id": "v1",
+    "brand": "Toyota",
+    "model": "Corolla Altis 1.8 汽油尊爵",
+    "price": 885000,
+    "displacement": 1798,
+    "horsepower": 140.0,
+    "torque": 17.5,
+    "avgFuelConsumption": 14.9,
+    "transmission": "Super CVT-i 無段變速",
+    "frontSuspension": "麥花臣",
+    "rearSuspension": "扭力樑",
+    "engineType": "自然進氣",
+    "maintenanceCost60k": 24000,
+    "partsPrices": {
+      "前保桿": 4500,
+      "頭燈總成": 6000,
+      "照後鏡": 2500
+    },
+    "reliabilityScore": 92
+  },
+  {
+    "id": "v2",
+    "brand": "Ford",
+    "model": "Focus 5D ST-Line Vignale",
+    "price": 979000,
+    "displacement": 1497,
+    "horsepower": 182.0,
+    "torque": 24.5,
+    "avgFuelConsumption": 16.7,
+    "transmission": "SelectShift™ 8速手自排",
+    "frontSuspension": "麥花臣",
+    "rearSuspension": "多連桿",
+    "engineType": "渦輪增壓",
+    "maintenanceCost60k": 35040,
+    "partsPrices": {
+      "前保桿": 5500,
+      "頭燈總成": 12000,
+      "照後鏡": 3500
+    },
+    "reliabilityScore": 78
+  },
+  {
+    "id": "v3",
+    "brand": "Honda",
+    "model": "CR-V 1.5 VTi-S",
+    "price": 1059000,
+    "displacement": 1498,
+    "horsepower": 193.0,
+    "torque": 24.8,
+    "avgFuelConsumption": 14.7,
+    "transmission": "CVT 無段變速",
+    "frontSuspension": "麥花臣",
+    "rearSuspension": "多連桿",
+    "engineType": "渦輪增壓",
+    "maintenanceCost60k": 30497,
+    "partsPrices": {
+      "前保桿": 6500,
+      "頭燈總成": 9500,
+      "照後鏡": 4000
+    },
+    "reliabilityScore": 88
+  },
+  {
+    "id": "v4",
+    "brand": "Toyota",
+    "model": "Corolla Altis Hybrid 旗艦",
+    "price": 885000,
+    "displacement": 1798,
+    "horsepower": 122.0,
+    "torque": 14.5,
+    "avgFuelConsumption": 25.3,
+    "transmission": "E-CVT 電子控制無段變速",
+    "frontSuspension": "麥花臣",
+    "rearSuspension": "扭力樑",
+    "engineType": "油電混合",
+    "maintenanceCost60k": 26000,
+    "partsPrices": {
+      "前保桿": 4500,
+      "頭燈總成": 8000,
+      "照後鏡": 2500
+    },
+    "reliabilityScore": 94
+  }
+]
