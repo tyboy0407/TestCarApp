@@ -21,8 +21,9 @@
     "reliabilityScore": 92,
     "imageUrls": [
       "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/front.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/side.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/interior.jpg"
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/leftside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/rightside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/back.jpg"
     ]
   },
   {
@@ -47,7 +48,9 @@
     "reliabilityScore": 78,
     "imageUrls": [
       "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/front.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/side.jpg"
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/leftside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/rightside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/back.jpg"
     ]
   },
   {
@@ -71,7 +74,10 @@
     },
     "reliabilityScore": 88,
     "imageUrls": [
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v3/front.jpg"
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v3/front.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v3/leftside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v3/rightside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v3/back.jpg"
     ]
   },
   {
@@ -95,7 +101,10 @@
     },
     "reliabilityScore": 94,
     "imageUrls": [
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/front.jpg"
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v4/front.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v4/leftside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v4/rightside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v4/back.jpg"
     ]
   },
   {
@@ -120,8 +129,9 @@
     "reliabilityScore": 88,
     "imageUrls": [
       "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/front.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/rear.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/side.jpg"
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/leftside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/rightside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/back.jpg"
     ]
   }
 ]
