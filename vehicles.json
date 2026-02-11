@@ -18,7 +18,12 @@
       "頭燈總成": 6000,
       "照後鏡": 2500
     },
-    "reliabilityScore": 92
+    "reliabilityScore": 92,
+    "imageUrls": [
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/front.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/side.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/interior.jpg"
+    ]
   },
   {
     "id": "v2",
@@ -39,7 +44,11 @@
       "頭燈總成": 12000,
       "照後鏡": 3500
     },
-    "reliabilityScore": 78
+    "reliabilityScore": 78,
+    "imageUrls": [
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/front.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/side.jpg"
+    ]
   },
   {
     "id": "v3",
@@ -60,7 +69,10 @@
       "頭燈總成": 9500,
       "照後鏡": 4000
     },
-    "reliabilityScore": 88
+    "reliabilityScore": 88,
+    "imageUrls": [
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v3/front.jpg"
+    ]
   },
   {
     "id": "v4",
@@ -81,7 +93,10 @@
       "頭燈總成": 8000,
       "照後鏡": 2500
     },
-    "reliabilityScore": 94
+    "reliabilityScore": 94,
+    "imageUrls": [
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/front.jpg"
+    ]
   },
   {
     "id": "v5",
@@ -102,6 +117,11 @@
       "頭燈總成": 32000,
       "照後鏡": 7500
     },
-    "reliabilityScore": 88
+    "reliabilityScore": 88,
+    "imageUrls": [
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/front.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/rear.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/side.jpg"
+    ]
   }
 ]
