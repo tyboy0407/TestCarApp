@@ -16,6 +16,7 @@ class Vehicle {
   final int maintenanceCost60k; // Total cost for 0-60,000 km
   final Map<String, int> partsPrices; // e.g., {'bumper': 4500, 'headlight': 6000}
   final int reliabilityScore; // 1-100
+  final List<String> imageUrls; // List of image URLs
 
   const Vehicle({
     required this.id,
@@ -33,6 +34,7 @@ class Vehicle {
     this.maintenanceCost60k = 0,
     this.partsPrices = const {},
     this.reliabilityScore = 0,
+    this.imageUrls = const [],
   });
 
   // Factory constructor to create a Vehicle from JSON
@@ -55,6 +57,7 @@ class Vehicle {
             (k, v) => MapEntry(k, v as int),
           ) ?? const {},
       reliabilityScore: json['reliabilityScore'] as int? ?? 0,
+      imageUrls: (json['imageUrls'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
     );
   }
 
@@ -76,6 +79,7 @@ class Vehicle {
       'maintenanceCost60k': maintenanceCost60k,
       'partsPrices': partsPrices,
       'reliabilityScore': reliabilityScore,
+      'imageUrls': imageUrls,
     };
   }
 

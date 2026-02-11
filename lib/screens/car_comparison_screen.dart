@@ -282,6 +282,16 @@ class _CarComparisonScreenState extends State<CarComparisonScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
+            // Vehicle Images Header
+            Row(
+              children: [
+                Expanded(child: _buildVehicleImageGallery(v1)),
+                const SizedBox(width: 8),
+                Expanded(child: _buildVehicleImageGallery(v2)),
+              ],
+            ),
+            const SizedBox(height: 16),
+
             _buildRow('車型', v1.model, v2.model, isHeader: true),
             const Divider(),
             
@@ -338,6 +348,77 @@ class _CarComparisonScreenState extends State<CarComparisonScreen> {
              highlightWinner: true, winnerLow: true, v1Val: v1.price.toDouble(), v2Val: v2.price.toDouble()),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildVehicleImageGallery(Vehicle vehicle) {
+    if (vehicle.imageUrls.isEmpty) {
+      return Container(
+        height: 120,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.directions_car, color: Colors.grey, size: 40),
+            Text('暫無圖片', style: TextStyle(color: Colors.grey, fontSize: 12)),
+          ],
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: 120,
+      child: Stack(
+        children: [
+          PageView.builder(
+            itemCount: vehicle.imageUrls.length,
+            itemBuilder: (context, index) {
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  vehicle.imageUrls[index],
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey.shade200,
+                      child: const Center(child: Icon(Icons.broken_image, color: Colors.grey)),
+                    );
+                  },
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                            : null,
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          if (vehicle.imageUrls.length > 1)
+            Positioned(
+              bottom: 4,
+              right: 4,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  '1/${vehicle.imageUrls.length}',
+                  style: const TextStyle(color: Colors.white, fontSize: 10),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
