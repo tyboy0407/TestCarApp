@@ -38,6 +38,11 @@ class VehicleProvider with ChangeNotifier {
       maintenanceCost60k: 24000,
       partsPrices: {'前保桿': 4500, '頭燈總成': 6000, '照後鏡': 2500},
       reliabilityScore: 92,
+      imageUrls: [
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/front.jpg',
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/side.jpg',
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/interior.jpg'
+      ],
     ),
     const Vehicle(
       id: 'v2',
@@ -55,6 +60,10 @@ class VehicleProvider with ChangeNotifier {
       maintenanceCost60k: 35040,
       partsPrices: {'前保桿': 5500, '頭燈總成': 12000, '照後鏡': 3500},
       reliabilityScore: 78,
+      imageUrls: [
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/front.jpg',
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/side.jpg'
+      ],
     ),
     const Vehicle(
       id: 'v3',
@@ -72,6 +81,9 @@ class VehicleProvider with ChangeNotifier {
       maintenanceCost60k: 30497,
       partsPrices: {'前保桿': 6500, '頭燈總成': 9500, '照後鏡': 4000},
       reliabilityScore: 88,
+      imageUrls: [
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v3/front.jpg'
+      ],
     ),
      const Vehicle(
       id: 'v4',
@@ -89,6 +101,9 @@ class VehicleProvider with ChangeNotifier {
       maintenanceCost60k: 26000,
       partsPrices: {'前保桿': 4500, '頭燈總成': 8000, '照後鏡': 2500},
       reliabilityScore: 94,
+      imageUrls: [
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/front.jpg'
+      ],
     ),
     const Vehicle(
       id: 'v5',
@@ -106,6 +121,11 @@ class VehicleProvider with ChangeNotifier {
       maintenanceCost60k: 42000,
       partsPrices: {'前保桿': 5500, '頭燈總成': 32000, '照後鏡': 7500},
       reliabilityScore: 88,
+      imageUrls: [
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/front.jpg',
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/rear.jpg',
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/side.jpg'
+      ],
     ),
   ];
 
