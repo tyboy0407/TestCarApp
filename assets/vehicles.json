@@ -83,15 +83,15 @@
   {
     "id": "v4",
     "brand": "Toyota",
-    "model": "Corolla Altis Hybrid 旗艦",
-    "price": 885000,
+    "model": "Corolla CROSS Hybrid 豪華",
+    "price": 849000,
     "displacement": 1798,
-    "horsepower": 122.0,
+    "horsepower": 122,
     "torque": 14.5,
-    "avgFuelConsumption": 25.3,
-    "transmission": "E-CVT 電子控制無段變速",
-    "frontSuspension": "麥花臣",
-    "rearSuspension": "扭力樑",
+    "avgFuelConsumption": 23.5,
+    "transmission": "E-CVT電子控制無段變速系統",
+    "frontSuspension": "獨立麥花臣式 附防傾平衡桿",
+    "rearSuspension": "扭力桿式拖曳臂 附防傾平衡桿",
     "engineType": "油電混合",
     "maintenanceCost60k": 26000,
     "partsPrices": {
@@ -132,6 +132,60 @@
       "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/leftside.jpg",
       "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/rightside.jpg",
       "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/back.jpg"
+    ]
+  },
+  {
+    "id": "v6",
+    "brand": "Honda",
+    "model": "HR-V e:HEV S",
+    "price": 899000,
+    "displacement": 1498,
+    "horsepower": 131.0,
+    "torque": 25.8,
+    "avgFuelConsumption": 23.5,
+    "transmission": "E-CVT 電子控制無段變速",
+    "frontSuspension": "麥花臣式",
+    "rearSuspension": "H型扭力桿",
+    "engineType": "1.5L 阿金森循環引擎 + e:HEV 電驅雙動能系統",
+    "maintenanceCost60k": 27500,
+    "partsPrices": {
+      "前保桿": 5200,
+      "頭燈總成": 21000,
+      "照後鏡": 6200
+    },
+    "reliabilityScore": 92,
+    "imageUrls": [
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/front.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/leftside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/rightside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/back.jpg"
+    ]
+  },
+  {
+    "id": "v7",
+    "brand": "Hyundai",
+    "model": "Venue GLB 雙色版",
+    "price": 769000,
+    "displacement": 1598,
+    "horsepower": 123.0,
+    "torque": 15.7,
+    "avgFuelConsumption": 17.1,
+    "transmission": "IVT 智慧無段變速（模擬 8 速手自排）",
+    "frontSuspension": "麥花臣式",
+    "rearSuspension": "扭力樑式",
+    "engineType": "自然進氣直列 4 缸",
+    "maintenanceCost60k": 22000,
+    "partsPrices": {
+      "前保桿": 4500,
+      "頭燈總成": 12000,
+      "照後鏡": 4200
+    },
+    "reliabilityScore": 91,
+    "imageUrls": [
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/front.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/leftside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/rightside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/back.jpg"
     ]
   }
 ]
