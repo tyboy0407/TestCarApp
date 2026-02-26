@@ -194,7 +194,7 @@ class ComparisonTableTab extends StatefulWidget {
 }
 
 class _ComparisonTableTabState extends State<ComparisonTableTab> {
-  int _selectedChart = 0; // 0: Fuel, 1: Price, 2: Torque
+  int _selectedChart = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -207,7 +207,6 @@ class _ComparisonTableTabState extends State<ComparisonTableTab> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildSectionTitle('可視化數據對比'),
-                // Toggle Buttons
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -325,7 +324,6 @@ class _ComparisonTableTabState extends State<ComparisonTableTab> {
             BarChartItem(label: 'Suzuki S-Cross', value: 23.9, displayValue: '23.9', color: Colors.red.shade400),
             BarChartItem(label: 'Lexus LBX', value: 18.8, displayValue: '18.8', color: Colors.orange.shade800),
             BarChartItem(label: 'Yaris Cross', value: 14.1, displayValue: '14.1', color: Colors.grey),
-            // Toyota CC torque data is complex (engine + motor), using system or primary source approximation
             BarChartItem(label: 'Toyota CC', value: 16.6, displayValue: '16.6 (引擎)', color: Colors.grey),
           ],
         );
@@ -354,44 +352,60 @@ class RecommendationsTab extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
-        _buildSectionTitle('兩大核心軸向'),
-        const SizedBox(height: 10),
-        _buildStrategyCard(
-          title: '軸向 A：駕馭靈活與空間機能',
-          targetAudience: '重視「以人為本」的機械極小化、空間極大化，以及線性加速與駕駛樂趣。',
-          recommendations: [
-            '首選：Honda HR-V e:HEV (空間魔術師)',
-            '激進派：Nissan Kicks e-POWER (純電驅動感)',
-            '熱血派：Hyundai Kona Hybrid (DCT 雙離合器)',
-            '戶外派：Suzuki S-Cross (AllGrip 四驅)',
-          ],
-          color: Colors.indigo.shade50,
-          borderColor: Colors.indigo,
+        _buildSectionTitle('購車考量象限圖'),
+        const Text(
+          '以下象限圖幫助您快速定位適合的車款。點擊圖中座標可了解各車款特色。',
+          style: TextStyle(fontSize: 14, color: Colors.grey),
         ),
         const SizedBox(height: 16),
-        _buildStrategyCard(
-          title: '軸向 B：穩定務實與都會通勤',
-          targetAudience: '重視經濟效益、家庭乘坐舒適度、長期持有成本與品牌信賴感。',
-          recommendations: [
-            '首選：Toyota Corolla Cross Hybrid (國民神車)',
-            '升級選：Lexus LBX (豪華質感)',
-            '經濟選：Kia Stonic 1.0T (高CP值)',
-            '入門選：Toyota Yaris Cross (預算先決)',
+        
+        // 象限圖 A：性價比 vs. 安全性能
+        QuadrantChart(
+          title: 'A.【高 CP 值 vs. 安全性能】',
+          xAxisLabel: '總持有成本 (TCO)',
+          yAxisLabel: '安全與科技配備',
+          xLeftLabel: '預算/代步',
+          xRightLabel: '高級/標竿',
+          yBottomLabel: '基本配備',
+          yTopLabel: '頂級安全',
+          quadrantLabels: ['標竿神車', '科技新寵', '純粹代步', '務實選'],
+          items: [
+            QuadrantItem(label: 'Corolla Cross', x: 0.8, y: 0.7, color: Colors.red),
+            QuadrantItem(label: 'Lexus LBX', x: 0.9, y: 0.9, color: Colors.purple),
+            QuadrantItem(label: 'Yaris Cross', x: -0.7, y: -0.5, color: Colors.blue),
+            QuadrantItem(label: 'HR-V e:HEV', x: 0.3, y: 0.6, color: Colors.orange),
+            QuadrantItem(label: 'Kicks e-POWER', x: 0.4, y: 0.5, color: Colors.green),
+            QuadrantItem(label: 'Stonic', x: -0.3, y: 0.2, color: Colors.teal),
           ],
-          color: Colors.amber.shade50,
-          borderColor: Colors.amber,
         ),
         const SizedBox(height: 24),
-        _buildSectionTitle('結論'),
-        const Card(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              '消費者應根據自身生活型態選擇。若追求駕駛樂趣與靈活空間，Honda 與 Nissan 是首選；若重視長期持有成本、保值性與舒適度，Toyota 與 Lexus 則是無可撼動的王者。',
-              style: TextStyle(fontSize: 16, height: 1.5),
-            ),
-          ),
-        )
+        
+        // 象限圖 B：都會靈活性 vs. 空間承載力
+        QuadrantChart(
+          title: 'B.【都會靈活性 vs. 空間承載力】',
+          xAxisLabel: '都會便利性 (短車身/易停)',
+          yAxisLabel: '空間多元性 (容積/機能)',
+          xLeftLabel: '長車身/大氣',
+          xRightLabel: '靈活/好停',
+          yBottomLabel: '基本載物',
+          yTopLabel: '空間魔術師',
+          quadrantLabels: ['都會全能', '露營出遊', '傳統房車感', '個人通勤'],
+          items: [
+            QuadrantItem(label: 'HR-V', x: 0.4, y: 0.9, color: Colors.orange),
+            QuadrantItem(label: 'Corolla Cross', x: -0.2, y: 0.7, color: Colors.red),
+            QuadrantItem(label: 'Stonic', x: 0.8, y: -0.4, color: Colors.teal),
+            QuadrantItem(label: 'Kicks', x: 0.5, y: 0.3, color: Colors.green),
+            QuadrantItem(label: 'Yaris Cross', x: 0.6, y: 0.6, color: Colors.blue),
+            QuadrantItem(label: 'S-Cross', x: -0.5, y: 0.8, color: Colors.indigo),
+          ],
+        ),
+        
+        const SizedBox(height: 24),
+        _buildSectionTitle('如何使用此圖表？'),
+        _buildCard(
+          title: '象限分析說明',
+          content: '● 象限 A：右上角代表該價位的標竿車款，雖然持有成本較高，但能換取完整的安全科技；左下角則是經濟導向的代步工具。\n\n● 象限 B：左上角適合有露營或家庭大量載物需求的使用者；右下角則適合單身通勤或經常在市區機械車位停車的族群。',
+        ),
       ],
     );
   }
@@ -467,41 +481,6 @@ Widget _buildListTile(String title, String content) {
             ),
           ),
         ),
-      ],
-    ),
-  );
-}
-
-Widget _buildStrategyCard({
-  required String title,
-  required String targetAudience,
-  required List<String> recommendations,
-  required Color color,
-  required Color borderColor,
-}) {
-  return Container(
-    padding: const EdgeInsets.all(16),
-    decoration: BoxDecoration(
-      color: color,
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: borderColor.withOpacity(0.5), width: 1.5),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: borderColor)),
-        const SizedBox(height: 8),
-        Text('適合對象：$targetAudience', style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic)),
-        const Divider(height: 24),
-        ...recommendations.map((rec) => Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Row(
-                children: [
-                  Icon(Icons.arrow_right, color: borderColor),
-                  Expanded(child: Text(rec, style: const TextStyle(fontWeight: FontWeight.w500))),
-                ],
-              ),
-            )),
       ],
     ),
   );

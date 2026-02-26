@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/vehicle_provider.dart';
 import '../widgets/animated_scale_button.dart';
+import '../widgets/loading_progress_dialog.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -45,6 +48,26 @@ class _LoginScreenState extends State<LoginScreen> {
           behavior: SnackBarBehavior.floating,
         ),
       );
+    } else {
+      // 登入成功，顯示載入進度對話框
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false, // 禁止點擊外部關閉
+          builder: (context) => LoadingProgressDialog(
+            onLoading: () async {
+              // 觸發真實的資料獲取
+              await Provider.of<VehicleProvider>(context, listen: false).fetchVehicles();
+            },
+            onFinished: () {
+              // 加載完成後跳轉
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+              );
+            },
+          ),
+        );
+      }
     }
   }
 
@@ -69,14 +92,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Colors.black87,
                   ),
                   const SizedBox(height: 24),
-                  const Text(
-                    'Welcome Back',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.0,
-                      color: Colors.black,
+                  ShaderMask(
+                    shaderCallback: (bounds) => const LinearGradient(
+                      colors: [Color(0xFFFF9A8B), Color(0xFFFF6A88)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ).createShader(bounds),
+                    child: const Text(
+                      'Wheelie',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 40, // 稍微加大字體讓漸層更明顯
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                        color: Colors.white, // ShaderMask 會將顏色覆蓋，這裡設為白色
+                      ),
                     ),
                   ),
                   const SizedBox(height: 8),

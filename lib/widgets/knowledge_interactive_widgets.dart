@@ -111,7 +111,6 @@ class BarChartItem {
 }
 
 /// An interactive bar chart where bars animate in when the widget builds.
-/// Supports switching between different datasets.
 class InteractiveBarChart extends StatefulWidget {
   final String title;
   final List<BarChartItem> items;
@@ -131,15 +130,11 @@ class InteractiveBarChart extends StatefulWidget {
 }
 
 class _InteractiveBarChartState extends State<InteractiveBarChart> {
-  // Use a key to force rebuild when title/items change if needed, 
-  // or rely on didUpdateWidget to trigger animations.
-  // For simplicity, we'll use a local state to trigger animation.
   bool _animate = false;
 
   @override
   void initState() {
     super.initState();
-    // Trigger animation after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) setState(() => _animate = true);
     });
@@ -197,7 +192,6 @@ class _InteractiveBarChartState extends State<InteractiveBarChart> {
                         
                         return Stack(
                           children: [
-                            // Background track
                             Container(
                               height: 10,
                               width: maxBarWidth,
@@ -206,7 +200,6 @@ class _InteractiveBarChartState extends State<InteractiveBarChart> {
                                 borderRadius: BorderRadius.circular(5),
                               ),
                             ),
-                            // Animated Bar
                             AnimatedContainer(
                               duration: const Duration(milliseconds: 800),
                               curve: Curves.easeOutQuart,
@@ -227,6 +220,161 @@ class _InteractiveBarChartState extends State<InteractiveBarChart> {
             }).toList(),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Data model for quadrant chart items
+class QuadrantItem {
+  final String label;
+  final double x; // -1.0 to 1.0
+  final double y; // -1.0 to 1.0
+  final Color color;
+
+  QuadrantItem({
+    required this.label,
+    required this.x,
+    required this.y,
+    required this.color,
+  });
+}
+
+/// A specialized quadrant chart for car evaluation
+class QuadrantChart extends StatelessWidget {
+  final String title;
+  final String xAxisLabel;
+  final String yAxisLabel;
+  final String xLeftLabel;
+  final String xRightLabel;
+  final String yBottomLabel;
+  final String yTopLabel;
+  final List<QuadrantItem> items;
+  final List<String> quadrantLabels; // [TR, TL, BL, BR]
+
+  const QuadrantChart({
+    super.key,
+    required this.title,
+    required this.xAxisLabel,
+    required this.yAxisLabel,
+    required this.xLeftLabel,
+    required this.xRightLabel,
+    required this.yBottomLabel,
+    required this.yTopLabel,
+    required this.items,
+    this.quadrantLabels = const ['', '', '', ''],
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            AspectRatio(
+              aspectRatio: 1,
+              child: Stack(
+                children: [
+                  // Axis Labels
+                  Positioned(top: 0, left: 0, right: 0, child: Center(child: _buildAxisLabel(yTopLabel, true))),
+                  Positioned(bottom: 0, left: 0, right: 0, child: Center(child: _buildAxisLabel(yBottomLabel, true))),
+                  Positioned(left: 0, top: 0, bottom: 0, child: Center(child: RotatedBox(quarterTurns: 3, child: _buildAxisLabel(xLeftLabel, true)))),
+                  Positioned(right: 0, top: 0, bottom: 0, child: Center(child: RotatedBox(quarterTurns: 1, child: _buildAxisLabel(xRightLabel, true)))),
+                  
+                  // The Grid
+                  Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        color: Colors.grey.shade50,
+                      ),
+                      child: Stack(
+                        children: [
+                          // Cross lines
+                          const Center(child: Divider(color: Colors.grey, thickness: 1)),
+                          const Center(child: VerticalDivider(color: Colors.grey, thickness: 1)),
+                          
+                          // Quadrant Labels
+                          if (quadrantLabels.length >= 4) ...[
+                             Positioned(top: 10, right: 10, child: _buildQuadrantTag(quadrantLabels[0], Colors.orange.shade100)),
+                             Positioned(top: 10, left: 10, child: _buildQuadrantTag(quadrantLabels[1], Colors.blue.shade100)),
+                             Positioned(bottom: 10, left: 10, child: _buildQuadrantTag(quadrantLabels[2], Colors.grey.shade200)),
+                             Positioned(bottom: 10, right: 10, child: _buildQuadrantTag(quadrantLabels[3], Colors.green.shade100)),
+                          ],
+
+                          // Items
+                          ...items.map((item) => _buildItem(item)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.info_outline, size: 14, color: Colors.grey[600]),
+                const SizedBox(width: 4),
+                Text('橫軸：$xAxisLabel | 縱軸：$yAxisLabel', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAxisLabel(String text, bool isBold) {
+    return Text(text, style: TextStyle(fontSize: 11, fontWeight: isBold ? FontWeight.bold : FontWeight.normal, color: Colors.black54));
+  }
+
+  Widget _buildQuadrantTag(String label, Color color) {
+    if (label.isEmpty) return const SizedBox.shrink();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
+      child: Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black54)),
+    );
+  }
+
+  Widget _buildItem(QuadrantItem item) {
+    return Align(
+      alignment: Alignment(item.x, -item.y), // Flutter coordinates: y is positive downwards
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+              color: item.color,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 2),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 4)],
+            ),
+          ),
+          const SizedBox(height: 2),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              item.label,
+              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
       ),
     );
   }

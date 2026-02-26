@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import 'providers/evaluation_provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/vehicle_provider.dart';
-import 'screens/home_screen.dart';
-import 'screens/login_screen.dart';
+import 'screens/splash_screen.dart';
 
 void main() {
   runApp(const CarEvaluationApp());
@@ -93,13 +92,7 @@ class CarEvaluationApp extends StatelessWidget {
             ),
           ),
         ),
-        // 使用 Consumer 來監聽 AuthProvider 的變化
-        home: Consumer<AuthProvider>(
-          builder: (context, auth, _) {
-            // 如果已登入顯示首頁，否則顯示登入頁
-            return auth.isLoggedIn ? const HomeScreen() : const LoginScreen();
-          },
-        ),
+        home: const SplashScreen(),
       ),
     );
   }
