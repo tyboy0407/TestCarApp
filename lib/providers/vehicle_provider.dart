@@ -38,6 +38,7 @@ class VehicleProvider with ChangeNotifier {
       maintenanceCost60k: 24000,
       partsPrices: {'前保桿': 4500, '頭燈總成': 6000, '照後鏡': 2500},
       reliabilityScore: 92,
+      category: '轎車',
       imageUrls: [
         'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/front.jpg',
         'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/side.jpg',
@@ -60,6 +61,7 @@ class VehicleProvider with ChangeNotifier {
       maintenanceCost60k: 35040,
       partsPrices: {'前保桿': 5500, '頭燈總成': 12000, '照後鏡': 3500},
       reliabilityScore: 78,
+      category: '轎車',
       imageUrls: [
         'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/front.jpg',
         'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/side.jpg'
@@ -81,6 +83,7 @@ class VehicleProvider with ChangeNotifier {
       maintenanceCost60k: 30497,
       partsPrices: {'前保桿': 6500, '頭燈總成': 9500, '照後鏡': 4000},
       reliabilityScore: 88,
+      category: '休旅車',
       imageUrls: [
         'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v3/front.jpg'
       ],
@@ -101,6 +104,7 @@ class VehicleProvider with ChangeNotifier {
       maintenanceCost60k: 26000,
       partsPrices: {'前保桿': 4500, '頭燈總成': 8000, '照後鏡': 2500},
       reliabilityScore: 94,
+      category: '休旅車',
       imageUrls: [
         'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/front.jpg'
       ],
@@ -121,6 +125,7 @@ class VehicleProvider with ChangeNotifier {
       maintenanceCost60k: 42000,
       partsPrices: {'前保桿': 5500, '頭燈總成': 32000, '照後鏡': 7500},
       reliabilityScore: 88,
+      category: '休旅車',
       imageUrls: [
         'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/front.jpg',
         'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/rear.jpg',
