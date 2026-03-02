@@ -104,13 +104,38 @@ class VehicleProvider with ChangeNotifier {
       maintenanceCost60k: 26000,
       partsPrices: {'前保桿': 4500, '頭燈總成': 8000, '照後鏡': 2500},
       reliabilityScore: 94,
-      category: '休旅車',
+      category: '轎車',
       imageUrls: [
         'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/front.jpg'
       ],
     ),
-    const Vehicle(
+     const Vehicle(
       id: 'v5',
+      brand: 'Toyota',
+      model: 'Corolla Cross 1.8 Hybrid 旗艦',
+      price: 985000,
+      displacement: 1798,
+      horsepower: 122.0,
+      torque: 14.5,
+      avgFuelConsumption: 21.9,
+      transmission: 'E-CVT 電子控制無段變速',
+      frontSuspension: '麥花臣',
+      rearSuspension: '扭力樑',
+      engineType: '油電混合',
+      category: '休旅車',
+      maintenanceCost60k: 28000,
+      partsPrices: {
+        '前保桿': 5500,
+        '頭燈總成': 9000,
+        '照後鏡': 3000
+      },
+      reliabilityScore: 91,
+      imageUrls: [
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/front.jpg'
+      ],
+    ),
+    const Vehicle(
+      id: 'v6',
       brand: 'Kia',
       model: 'Stonic 1.0T 智慧油電 GT-line',
       price: 889000,
@@ -123,15 +148,21 @@ class VehicleProvider with ChangeNotifier {
       rearSuspension: '扭力樑式',
       engineType: '渦輪增壓直列 3 缸 + 48V 輕油電系統',
       maintenanceCost60k: 42000,
-      partsPrices: {'前保桿': 5500, '頭燈總成': 32000, '照後鏡': 7500},
+      partsPrices: {
+        '前保桿': 5500,
+        '頭燈總成': 32000,
+        '照後鏡': 7500
+      },
       reliabilityScore: 88,
       category: '休旅車',
       imageUrls: [
-        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/front.jpg',
-        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/rear.jpg',
-        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/side.jpg'
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/front.jpg',
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/leftside.jpg',
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/rightside.jpg',
+        'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/back.jpg'
       ],
     ),
+
   ];
 
   static const String _customVehiclesKey = 'custom_vehicles';
