@@ -13,6 +13,9 @@ class CarComparisonScreen extends StatefulWidget {
 }
 
 class _CarComparisonScreenState extends State<CarComparisonScreen> {
+  String? _selectedCategory1;
+  String? _selectedCategory2;
+  
   String? _selectedBrand1;
   String? _selectedVehicleId1;
   
@@ -21,20 +24,33 @@ class _CarComparisonScreenState extends State<CarComparisonScreen> {
 
   final NumberFormat _currencyFormat = NumberFormat.currency(locale: 'zh_TW', symbol: '\$', decimalDigits: 0);
 
-  List<String> _getUniqueBrands(List<Vehicle> vehicles) {
-    return vehicles.map((v) => v.brand).toSet().toList()..sort();
+  List<String> _getUniqueCategories(List<Vehicle> vehicles) {
+    return vehicles.map((v) => v.category).toSet().toList()..sort();
   }
 
-  List<Vehicle> _getVehiclesByBrand(List<Vehicle> vehicles, String? brand) {
+  List<String> _getUniqueBrands(List<Vehicle> vehicles, String? category) {
+    Iterable<Vehicle> filtered = vehicles;
+    if (category != null) {
+      filtered = filtered.where((v) => v.category == category);
+    }
+    return filtered.map((v) => v.brand).toSet().toList()..sort();
+  }
+
+  List<Vehicle> _getVehiclesByBrand(List<Vehicle> vehicles, String? brand, String? category) {
     if (brand == null) return [];
-    return vehicles.where((v) => v.brand == brand).toList();
+    Iterable<Vehicle> filtered = vehicles.where((v) => v.brand == brand);
+    if (category != null) {
+      filtered = filtered.where((v) => v.category == category);
+    }
+    return filtered.toList();
   }
 
   @override
   Widget build(BuildContext context) {
     final vehicleProvider = Provider.of<VehicleProvider>(context);
     final vehicles = vehicleProvider.vehicles;
-    final brands = _getUniqueBrands(vehicles);
+    final categories = _getUniqueCategories(vehicles);
+
 
     // Resolve Vehicle 1
     Vehicle? selectedVehicle1;
@@ -119,6 +135,8 @@ class _CarComparisonScreenState extends State<CarComparisonScreen> {
               ),
               const SizedBox(height: 16),
               
+
+
               // Selection Area
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +145,12 @@ class _CarComparisonScreenState extends State<CarComparisonScreen> {
                     child: _buildVehicleSelectorGroup(
                       label: '車輛 A',
                       allVehicles: vehicles,
-                      brands: brands,
+                      selectedCategory: _selectedCategory1,
+                      onCategoryChanged: (val) {
+                        setState(() {
+                          _selectedCategory1 = val;
+                        });
+                      },
                       selectedBrand: effectiveBrand1,
                       selectedVehicle: selectedVehicle1,
                       onBrandChanged: (val) {
@@ -156,7 +179,12 @@ class _CarComparisonScreenState extends State<CarComparisonScreen> {
                     child: _buildVehicleSelectorGroup(
                       label: '車輛 B',
                       allVehicles: vehicles,
-                      brands: brands,
+                      selectedCategory: _selectedCategory2,
+                      onCategoryChanged: (val) {
+                        setState(() {
+                          _selectedCategory2 = val;
+                        });
+                      },
                       selectedBrand: effectiveBrand2,
                       selectedVehicle: selectedVehicle2,
                       onBrandChanged: (val) {
@@ -200,18 +228,42 @@ class _CarComparisonScreenState extends State<CarComparisonScreen> {
   Widget _buildVehicleSelectorGroup({
     required String label,
     required List<Vehicle> allVehicles,
-    required List<String> brands,
+    required String? selectedCategory,
+    required ValueChanged<String?> onCategoryChanged,
     required String? selectedBrand,
     required Vehicle? selectedVehicle,
     required ValueChanged<String?> onBrandChanged,
     required ValueChanged<Vehicle?> onVehicleChanged,
   }) {
-    final availableModels = _getVehiclesByBrand(allVehicles, selectedBrand);
+    final categories = _getUniqueCategories(allVehicles);
+    final brands = _getUniqueBrands(allVehicles, selectedCategory);
+
+    final availableModels = _getVehiclesByBrand(allVehicles, selectedBrand, selectedCategory);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          isExpanded: true,
+          value: selectedCategory,
+          decoration: const InputDecoration(
+            labelText: '選擇分類 (轎車/休旅車)',
+            border: OutlineInputBorder(),
+            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          ),
+          items: [
+            const DropdownMenuItem(value: null, child: Text('全部分類')),
+            ...categories.map((c) => DropdownMenuItem(value: c, child: Text(c))),
+          ],
+          onChanged: (val) {
+            onCategoryChanged(val);
+            // Also reset brand and vehicle when category changes
+            onBrandChanged(null);
+            onVehicleChanged(null);
+          },
+        ),
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
           isExpanded: true,

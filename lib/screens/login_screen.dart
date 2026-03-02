@@ -57,7 +57,11 @@ class _LoginScreenState extends State<LoginScreen> {
           builder: (context) => LoadingProgressDialog(
             onLoading: () async {
               // 觸發真實的資料獲取
-              await Provider.of<VehicleProvider>(context, listen: false).fetchVehicles();
+              // Defer calling fetchVehicles to avoid setState during build
+              WidgetsBinding.instance.addPostFrameCallback((_) async {
+                await Provider.of<VehicleProvider>(context, listen: false).fetchVehicles();
+                // onFinished will be called by LoadingProgressDialog after onLoading completes
+              });
             },
             onFinished: () {
               // 加載完成後跳轉
