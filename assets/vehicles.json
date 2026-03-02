@@ -12,6 +12,7 @@
     "frontSuspension": "麥花臣",
     "rearSuspension": "扭力樑",
     "engineType": "自然進氣",
+    "category": "轎車",
     "maintenanceCost60k": 24000,
     "partsPrices": {
       "前保桿": 4500,
@@ -20,10 +21,7 @@
     },
     "reliabilityScore": 92,
     "imageUrls": [
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/front.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/leftside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/rightside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/back.jpg"
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/front.jpg"
     ]
   },
   {
@@ -39,6 +37,7 @@
     "frontSuspension": "麥花臣",
     "rearSuspension": "多連桿",
     "engineType": "渦輪增壓",
+    "category": "轎車",
     "maintenanceCost60k": 35040,
     "partsPrices": {
       "前保桿": 5500,
@@ -47,10 +46,7 @@
     },
     "reliabilityScore": 78,
     "imageUrls": [
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/front.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/leftside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/rightside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/back.jpg"
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v2/front.jpg"
     ]
   },
   {
@@ -66,6 +62,7 @@
     "frontSuspension": "麥花臣",
     "rearSuspension": "多連桿",
     "engineType": "渦輪增壓",
+    "category": "休旅車",
     "maintenanceCost60k": 30497,
     "partsPrices": {
       "前保桿": 6500,
@@ -74,25 +71,23 @@
     },
     "reliabilityScore": 88,
     "imageUrls": [
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v3/front.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v3/leftside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v3/rightside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v3/back.jpg"
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v3/front.jpg"
     ]
   },
   {
     "id": "v4",
     "brand": "Toyota",
-    "model": "Corolla CROSS Hybrid 豪華",
-    "price": 849000,
+    "model": "Corolla Altis Hybrid 旗艦",
+    "price": 885000,
     "displacement": 1798,
-    "horsepower": 122,
+    "horsepower": 122.0,
     "torque": 14.5,
-    "avgFuelConsumption": 23.5,
-    "transmission": "E-CVT電子控制無段變速系統",
-    "frontSuspension": "獨立麥花臣式 附防傾平衡桿",
-    "rearSuspension": "扭力桿式拖曳臂 附防傾平衡桿",
+    "avgFuelConsumption": 25.3,
+    "transmission": "E-CVT 電子控制無段變速",
+    "frontSuspension": "麥花臣",
+    "rearSuspension": "扭力樑",
     "engineType": "油電混合",
+    "category": "轎車",
     "maintenanceCost60k": 26000,
     "partsPrices": {
       "前保桿": 4500,
@@ -101,14 +96,36 @@
     },
     "reliabilityScore": 94,
     "imageUrls": [
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v4/front.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v4/leftside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v4/rightside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v4/back.jpg"
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v1/front.jpg"
     ]
   },
   {
     "id": "v5",
+    "brand": "Toyota",
+    "model": "Corolla Cross 1.8 Hybrid 旗艦",
+    "price": 985000,
+    "displacement": 1798,
+    "horsepower": 122.0,
+    "torque": 14.5,
+    "avgFuelConsumption": 21.9,
+    "transmission": "E-CVT 電子控制無段變速",
+    "frontSuspension": "麥花臣",
+    "rearSuspension": "扭力樑",
+    "engineType": "油電混合",
+    "category": "休旅車",
+    "maintenanceCost60k": 28000,
+    "partsPrices": {
+      "前保桿": 5500,
+      "頭燈總成": 9000,
+      "照後鏡": 3000
+    },
+    "reliabilityScore": 91,
+    "imageUrls": [
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/front.jpg"
+    ]
+  },
+  {
+    "id": "v6",
     "brand": "Kia",
     "model": "Stonic 1.0T 智慧油電 GT-line",
     "price": 889000,
@@ -120,6 +137,7 @@
     "frontSuspension": "麥花臣式",
     "rearSuspension": "扭力樑式",
     "engineType": "渦輪增壓直列 3 缸 + 48V 輕油電系統",
+    "category": "休旅車",
     "maintenanceCost60k": 42000,
     "partsPrices": {
       "前保桿": 5500,
@@ -128,14 +146,14 @@
     },
     "reliabilityScore": 88,
     "imageUrls": [
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/front.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/leftside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/rightside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v5/back.jpg"
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/front.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/leftside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/rightside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/back.jpg"
     ]
   },
   {
-    "id": "v6",
+    "id": "v7",
     "brand": "Honda",
     "model": "HR-V e:HEV S",
     "price": 899000,
@@ -147,6 +165,7 @@
     "frontSuspension": "麥花臣式",
     "rearSuspension": "H型扭力桿",
     "engineType": "1.5L 阿金森循環引擎 + e:HEV 電驅雙動能系統",
+    "category": "休旅車",
     "maintenanceCost60k": 27500,
     "partsPrices": {
       "前保桿": 5200,
@@ -155,14 +174,14 @@
     },
     "reliabilityScore": 92,
     "imageUrls": [
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/front.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/leftside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/rightside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/back.jpg"
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v7/front.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v7/leftside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v7/rightside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v7/back.jpg"
     ]
   },
   {
-    "id": "v7",
+    "id": "v8",
     "brand": "Hyundai",
     "model": "Venue GLB 雙色版",
     "price": 769000,
@@ -174,6 +193,7 @@
     "frontSuspension": "麥花臣式",
     "rearSuspension": "扭力樑式",
     "engineType": "自然進氣直列 4 缸",
+    "category": "休旅車",
     "maintenanceCost60k": 22000,
     "partsPrices": {
       "前保桿": 4500,
@@ -182,10 +202,10 @@
     },
     "reliabilityScore": 91,
     "imageUrls": [
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/front.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/leftside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/rightside.jpg",
-      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/back.jpg"
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v8/front.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v8/leftside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v8/rightside.jpg",
+      "https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v8/back.jpg"
     ]
   }
 ]
