@@ -218,7 +218,6 @@ class VehicleProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final List<dynamic> remoteData = json.decode(response.body);
-        final List<Vehicle> remoteList = remoteData.map((json) => Vehicle.fromJson(json)).toList();
         
         // Merge strategy: Use a Map to de-duplicate by ID, prioritizing the freshest data
         final Map<String, Vehicle> mergedMap = {};
@@ -228,9 +227,19 @@ class VehicleProvider with ChangeNotifier {
           mergedMap[v.id] = v;
         }
         
-        // Add/Overwrite with remote vehicles
-        for (var v in remoteList) {
-          mergedMap[v.id] = v;
+        // Add/Overwrite with remote vehicles, preserving local categories if remote is missing them
+        for (var item in remoteData) {
+          final Map<String, dynamic> jsonMap = item as Map<String, dynamic>;
+          final id = jsonMap['id'] as String;
+          
+          if (!jsonMap.containsKey('category') && mergedMap.containsKey(id)) {
+            jsonMap['category'] = mergedMap[id]!.category;
+          }
+          if (!jsonMap.containsKey('imageUrls') && mergedMap.containsKey(id)) {
+            jsonMap['imageUrls'] = mergedMap[id]!.imageUrls;
+          }
+
+          mergedMap[id] = Vehicle.fromJson(jsonMap);
         }
 
         _remoteVehicles = mergedMap.values.toList();
