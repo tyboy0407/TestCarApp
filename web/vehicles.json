@@ -12,6 +12,7 @@
     "frontSuspension": "麥花臣",
     "rearSuspension": "扭力樑",
     "engineType": "自然進氣",
+    "category": "轎車",
     "maintenanceCost60k": 24000,
     "partsPrices": {
       "前保桿": 4500,
@@ -38,6 +39,7 @@
     "frontSuspension": "麥花臣",
     "rearSuspension": "多連桿",
     "engineType": "渦輪增壓",
+    "category": "轎車",
     "maintenanceCost60k": 35040,
     "partsPrices": {
       "前保桿": 5500,
@@ -63,6 +65,7 @@
     "frontSuspension": "麥花臣",
     "rearSuspension": "多連桿",
     "engineType": "渦輪增壓",
+    "category": "休旅車",
     "maintenanceCost60k": 30497,
     "partsPrices": {
       "前保桿": 6500,
@@ -87,6 +90,7 @@
     "frontSuspension": "麥花臣",
     "rearSuspension": "扭力樑",
     "engineType": "油電混合",
+    "category": "轎車",
     "maintenanceCost60k": 26000,
     "partsPrices": {
       "前保桿": 4500,
@@ -111,6 +115,7 @@
     "frontSuspension": "麥花臣式",
     "rearSuspension": "扭力樑式",
     "engineType": "渦輪增壓直列 3 缸 + 48V 輕油電系統",
+    "category": "休旅車",
     "maintenanceCost60k": 42000,
     "partsPrices": {
       "前保桿": 5500,

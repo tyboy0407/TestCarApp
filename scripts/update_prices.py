@@ -33,6 +33,7 @@ def main():
             "frontSuspension": "麥花臣",
             "rearSuspension": "扭力樑",
             "engineType": "自然進氣",
+            "category": "轎車",
             "maintenanceCost60k": 24000,
             "partsPrices": {"前保桿": 4500, "頭燈總成": 6000, "照後鏡": 2500},
             "reliabilityScore": 92
@@ -50,6 +51,7 @@ def main():
             "frontSuspension": "麥花臣",
             "rearSuspension": "多連桿",
             "engineType": "渦輪增壓",
+            "category": "轎車",
             "maintenanceCost60k": 35040,
             "partsPrices": {"前保桿": 5500, "頭燈總成": 12000, "照後鏡": 3500},
             "reliabilityScore": 78
@@ -67,6 +69,7 @@ def main():
             "frontSuspension": "麥花臣",
             "rearSuspension": "多連桿",
             "engineType": "渦輪增壓",
+            "category": "休旅車",
             "maintenanceCost60k": 30497,
             "partsPrices": {"前保桿": 6500, "頭燈總成": 9500, "照後鏡": 4000},
             "reliabilityScore": 88
@@ -84,6 +87,7 @@ def main():
             "frontSuspension": "麥花臣",
             "rearSuspension": "扭力樑",
             "engineType": "油電混合",
+            "category": "轎車",
             "maintenanceCost60k": 26000,
             "partsPrices": {"前保桿": 4500, "頭燈總成": 8000, "照後鏡": 2500},
             "reliabilityScore": 94

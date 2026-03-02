@@ -27,6 +27,7 @@ class _AddCustomVehicleScreenState extends State<AddCustomVehicleScreen> {
   String _frontSuspension = '';
   String _rearSuspension = '';
   String _engineType = '';
+  String _category = '轎車';
   
   // Cost Analysis Fields
   int _maintenanceCost60k = 0;
@@ -51,6 +52,7 @@ class _AddCustomVehicleScreenState extends State<AddCustomVehicleScreen> {
       _frontSuspension = v.frontSuspension;
       _rearSuspension = v.rearSuspension;
       _engineType = v.engineType;
+      _category = v.category;
       _maintenanceCost60k = v.maintenanceCost60k;
       _bumperPrice = v.partsPrices['前保桿'] ?? 0;
       _headlightPrice = v.partsPrices['頭燈總成'] ?? 0;
@@ -79,6 +81,7 @@ class _AddCustomVehicleScreenState extends State<AddCustomVehicleScreen> {
         frontSuspension: _frontSuspension,
         rearSuspension: _rearSuspension,
         engineType: _engineType,
+        category: _category,
         maintenanceCost60k: _maintenanceCost60k,
         partsPrices: {
           '前保桿': _bumperPrice,
@@ -121,6 +124,22 @@ class _AddCustomVehicleScreenState extends State<AddCustomVehicleScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildSectionTitle('基本資訊'),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: DropdownButtonFormField<String>(
+                  value: _category,
+                  decoration: const InputDecoration(
+                    labelText: '車輛分類',
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: '轎車', child: Text('轎車')),
+                    DropdownMenuItem(value: '休旅車', child: Text('休旅車')),
+                  ],
+                  onChanged: (val) => setState(() => _category = val!),
+                ),
+              ),
               Row(
                 children: [
                   Expanded(child: _buildTextField('廠牌', _brand, (val) => _brand = val)),

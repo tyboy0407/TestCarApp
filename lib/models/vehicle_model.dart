@@ -11,7 +11,8 @@ class Vehicle {
   final String frontSuspension;
   final String rearSuspension;
   final String engineType; // e.g., Turbo, NA, Hybrid
-  
+  final String category; // e.g., Sedan, SUV
+
   // New Fields for Ownership Cost
   final int maintenanceCost60k; // Total cost for 0-60,000 km
   final Map<String, int> partsPrices; // e.g., {'bumper': 4500, 'headlight': 6000}
@@ -31,6 +32,7 @@ class Vehicle {
     required this.frontSuspension,
     required this.rearSuspension,
     required this.engineType,
+    required this.category,
     this.maintenanceCost60k = 0,
     this.partsPrices = const {},
     this.reliabilityScore = 0,
@@ -52,6 +54,7 @@ class Vehicle {
       frontSuspension: json['frontSuspension'] as String,
       rearSuspension: json['rearSuspension'] as String,
       engineType: json['engineType'] as String,
+      category: json['category'] as String? ?? '轎車',
       maintenanceCost60k: json['maintenanceCost60k'] as int? ?? 0,
       partsPrices: (json['partsPrices'] as Map<String, dynamic>?)?.map(
             (k, v) => MapEntry(k, v as int),
@@ -76,6 +79,7 @@ class Vehicle {
       'frontSuspension': frontSuspension,
       'rearSuspension': rearSuspension,
       'engineType': engineType,
+      'category': category,
       'maintenanceCost60k': maintenanceCost60k,
       'partsPrices': partsPrices,
       'reliabilityScore': reliabilityScore,
