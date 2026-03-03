@@ -1,26 +1,22 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // For rootBundle
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/vehicle_model.dart';
 
 class VehicleProvider with ChangeNotifier {
-  // CONFIG: The URL pointing to your GitHub repository's raw vehicles.json
-  static const String _dataUrl = 'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/vehicles.json'; 
-
-  List<Vehicle> _remoteVehicles = [];
+  List<Vehicle> _builtinVehicles = [];
   List<Vehicle> _customVehicles = [];
   bool _isLoading = false;
   String? _error;
   DateTime? _lastFetchTime;
 
-  List<Vehicle> get vehicles => [..._remoteVehicles, ..._customVehicles];
+  List<Vehicle> get vehicles => [..._builtinVehicles, ..._customVehicles];
   bool get isLoading => _isLoading;
   String? get error => _error;
   DateTime? get lastFetchTime => _lastFetchTime;
 
-  // Fallback data (Offline cache)
+  // Fallback data (Used if asset loading fails)
   final List<Vehicle> _fallbackVehicles = [
     const Vehicle(
       id: 'v1',
@@ -147,6 +143,7 @@ class VehicleProvider with ChangeNotifier {
       frontSuspension: '麥花臣式',
       rearSuspension: '扭力樑式',
       engineType: '渦輪增壓直列 3 缸 + 48V 輕油電系統',
+      category: '休旅車',
       maintenanceCost60k: 42000,
       partsPrices: {
         '前保桿': 5500,
@@ -154,7 +151,6 @@ class VehicleProvider with ChangeNotifier {
         '照後鏡': 7500
       },
       reliabilityScore: 88,
-      category: '休旅車',
       imageUrls: [
         'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/front.jpg',
         'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/leftside.jpg',
@@ -162,13 +158,12 @@ class VehicleProvider with ChangeNotifier {
         'https://raw.githubusercontent.com/tyboy0407/TestCarApp/main/assets/images/vehicles/v6/back.jpg'
       ],
     ),
-
   ];
 
   static const String _customVehiclesKey = 'custom_vehicles';
 
   VehicleProvider() {
-    _remoteVehicles = [..._fallbackVehicles];
+    _builtinVehicles = [..._fallbackVehicles];
     _loadCustomVehicles();
     fetchVehicles();
   }
@@ -197,58 +192,18 @@ class VehicleProvider with ChangeNotifier {
     }
   }
 
-  // Use a dynamic URL that works for both local development and deployed web/mobile
-  String get _dynamicDataUrl {
-    // Add a timestamp to bypass browser cache
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    return '$_dataUrl?t=$timestamp';
-  }
-
   Future<void> fetchVehicles() async {
     _isLoading = true;
     _error = null;
     notifyListeners();
     
     try {
-      // 1. Load from local assets first
+      // Load built-in data from local assets
       await _loadFromAssets();
-
-      // 2. Attempt to fetch from remote (with cache busting)
-      final response = await http.get(Uri.parse(_dynamicDataUrl)).timeout(const Duration(seconds: 5));
-
-      if (response.statusCode == 200) {
-        final List<dynamic> remoteData = json.decode(response.body);
-        
-        // Merge strategy: Use a Map to de-duplicate by ID, prioritizing the freshest data
-        final Map<String, Vehicle> mergedMap = {};
-        
-        // Start with current list (which contains fallback + local assets)
-        for (var v in _remoteVehicles) {
-          mergedMap[v.id] = v;
-        }
-        
-        // Add/Overwrite with remote vehicles, preserving local categories if remote is missing them
-        for (var item in remoteData) {
-          final Map<String, dynamic> jsonMap = item as Map<String, dynamic>;
-          final id = jsonMap['id'] as String;
-          
-          if (!jsonMap.containsKey('category') && mergedMap.containsKey(id)) {
-            jsonMap['category'] = mergedMap[id]!.category;
-          }
-          if (!jsonMap.containsKey('imageUrls') && mergedMap.containsKey(id)) {
-            jsonMap['imageUrls'] = mergedMap[id]!.imageUrls;
-          }
-
-          mergedMap[id] = Vehicle.fromJson(jsonMap);
-        }
-
-        _remoteVehicles = mergedMap.values.toList();
-        _lastFetchTime = DateTime.now();
-        _error = null;
-        print('Vehicle data merged with remote source (Cache Busted).');
-      } 
+      print('Vehicle data initialized from local assets.');
     } catch (e) {
-      print('Remote fetch failed or timed out: $e. Using local data.');
+      print('Local asset load failed: $e. Using fallback data.');
+      _builtinVehicles = [..._fallbackVehicles];
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -259,17 +214,15 @@ class VehicleProvider with ChangeNotifier {
     try {
       final String jsonString = await rootBundle.loadString('vehicles.json');
       final List<dynamic> data = json.decode(jsonString);
-      _remoteVehicles = data.map((json) => Vehicle.fromJson(json)).toList();
+      _builtinVehicles = data.map((json) => Vehicle.fromJson(json)).toList();
       _lastFetchTime = DateTime.now();
-      print('Vehicle data loaded from local assets.');
     } catch (e) {
       print('Error loading from assets: $e');
-      // If asset loading also fails, we still have the _fallbackVehicles in _remoteVehicles from constructor
+      rethrow;
     }
   }
 
   void addVehicle(Vehicle vehicle) {
-    // If it's a custom vehicle (not from remote), add to custom list
     _customVehicles.add(vehicle);
     _saveCustomVehicles();
     notifyListeners();
@@ -284,13 +237,10 @@ class VehicleProvider with ChangeNotifier {
       return;
     }
 
-    final remoteIndex = _remoteVehicles.indexWhere((v) => v.id == vehicle.id);
-    if (remoteIndex >= 0) {
-      // If we update a remote vehicle, it becomes a "customized" version?
-      // For now, let's just update it in the remote list (in-memory) 
-      // or move it to custom if we want it to persist.
-      // Usually, users editing a built-in vehicle want to save their changes.
-      _remoteVehicles.removeAt(remoteIndex);
+    final builtinIndex = _builtinVehicles.indexWhere((v) => v.id == vehicle.id);
+    if (builtinIndex >= 0) {
+      // Moving modified built-in vehicle to custom list to persist changes locally
+      _builtinVehicles.removeAt(builtinIndex);
       _customVehicles.add(vehicle);
       _saveCustomVehicles();
       notifyListeners();
