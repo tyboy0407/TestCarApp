@@ -1,3 +1,5 @@
+import '../models/vehicle_model.dart';
+
 enum UsageType {
   commute, // 市區通勤
   longDistance, // 長途行駛
@@ -11,36 +13,6 @@ enum PowertrainType {
   hybrid, // 油電 (Full Hybrid)
   mildHybrid, // 輕油電
   electric, // 純電 (For Kicks e-POWER logic)
-}
-
-class _CarProfile {
-  final String name;
-  final String axis; // 'A' or 'B'
-  final PowertrainType type;
-  
-  // Scores (1-5)
-  final double scoreBudget; // High score = Cheaper
-  final double scoreSpace;
-  final double scoreFuel;
-  final double scorePower;
-  final double scoreSafety;
-  final double scoreComfort;
-  final double scoreResale;
-  final double scoreTech; // New!
-
-  const _CarProfile({
-    required this.name,
-    required this.axis,
-    required this.type,
-    required this.scoreBudget,
-    required this.scoreSpace,
-    required this.scoreFuel,
-    required this.scorePower,
-    required this.scoreSafety,
-    required this.scoreComfort,
-    required this.scoreResale,
-    required this.scoreTech,
-  });
 }
 
 class NeedsModel {
@@ -90,121 +62,99 @@ class NeedsModel {
     return model;
   }
 
-  // Internal Database of Cars
-  static const List<_CarProfile> _carDatabase = [
-    _CarProfile(name: 'Honda HR-V e:HEV', axis: 'A', type: PowertrainType.hybrid, scoreBudget: 3, scoreSpace: 5, scoreFuel: 4, scorePower: 3, scoreSafety: 4, scoreComfort: 3, scoreResale: 4, scoreTech: 3),
-    _CarProfile(name: 'Toyota Corolla Cross Hybrid', axis: 'B', type: PowertrainType.hybrid, scoreBudget: 3, scoreSpace: 4, scoreFuel: 5, scorePower: 3, scoreSafety: 4.5, scoreComfort: 5, scoreResale: 5, scoreTech: 3),
-    _CarProfile(name: 'Nissan Kicks e-POWER', axis: 'A', type: PowertrainType.electric, scoreBudget: 3, scoreSpace: 3, scoreFuel: 4, scorePower: 5, scoreSafety: 3, scoreComfort: 3, scoreResale: 3, scoreTech: 4),
-    _CarProfile(name: 'Hyundai Kona Hybrid', axis: 'A', type: PowertrainType.hybrid, scoreBudget: 3, scoreSpace: 3, scoreFuel: 4.5, scorePower: 4, scoreSafety: 4, scoreComfort: 4, scoreResale: 2, scoreTech: 5), // High tech
-    _CarProfile(name: 'Suzuki S-Cross', axis: 'A', type: PowertrainType.mildHybrid, scoreBudget: 3, scoreSpace: 4, scoreFuel: 3, scorePower: 4, scoreSafety: 3, scoreComfort: 3, scoreResale: 3, scoreTech: 3),
-    _CarProfile(name: 'Lexus LBX', axis: 'B', type: PowertrainType.hybrid, scoreBudget: 1, scoreSpace: 2, scoreFuel: 5, scorePower: 3, scoreSafety: 5, scoreComfort: 5, scoreResale: 4, scoreTech: 5),
-    _CarProfile(name: 'Toyota Yaris Cross', axis: 'B', type: PowertrainType.gasoline, scoreBudget: 5, scoreSpace: 4, scoreFuel: 3, scorePower: 2, scoreSafety: 3, scoreComfort: 3, scoreResale: 4, scoreTech: 2),
-    _CarProfile(name: 'Kia Stonic 1.0T', axis: 'B', type: PowertrainType.mildHybrid, scoreBudget: 5, scoreSpace: 3, scoreFuel: 3.5, scorePower: 3, scoreSafety: 3, scoreComfort: 3, scoreResale: 2, scoreTech: 3),
-  ];
+  // Dynamic Calculation using vehicles from JSON
+  List<Map<String, dynamic>> calculateRankedResults(List<Vehicle> allVehicles) {
+    if (allVehicles.isEmpty) return [];
 
-  // Dynamic Calculation
-  List<String> get recommendedModels {
-    // 1. Calculate Score for each car
-    var scoredCars = _carDatabase.map((car) {
+    // 1. Map Vehicle to Scored Profiles
+    var scoredCars = allVehicles.map((v) {
       double totalScore = 0;
       
-      // A. Slider Weights
-      totalScore += car.scoreBudget * importanceBudget;
-      totalScore += car.scoreSpace * importanceSpace;
-      totalScore += car.scoreFuel * importanceFuel;
-      totalScore += car.scorePower * importancePower;
-      totalScore += car.scoreSafety * importanceSafety;
-      totalScore += car.scoreComfort * importanceComfort;
-      totalScore += car.scoreResale * importanceResale;
-      totalScore += car.scoreTech * importanceTech;
+      // Calculate individual scores (normalized 1-5)
+      double scoreBudget = (1600000 - v.price).clamp(0, 1000000) / 250000 + 1; 
+      double scoreSpace = (v.category.contains('休旅') || v.category.contains('SUV')) ? 5.0 : 3.0;
+      double scoreFuel = (v.avgFuelConsumption - 10).clamp(0, 15) / 3.75 + 1;
+      double scorePower = (v.horsepower - 100).clamp(0, 100) / 25 + 1;
+      double scoreSafety = (v.reliabilityScore / 20).clamp(1, 5);
+      double scoreComfort = (v.price > 1200000) ? 5.0 : (v.price > 900000 ? 4.0 : 3.0);
+      double scoreResale = (v.brand == 'Toyota' || v.brand == 'Lexus') ? 5.0 : (v.brand == 'Honda' ? 4.0 : 3.0);
+      double scoreTech = v.engineType.contains('Hybrid') ? 4.5 : (v.engineType.contains('純電') ? 5.0 : 3.0);
 
-      // B. Usage Bonus (Weight: 10 points - significant)
+      // A. Weighted Score
+      totalScore += scoreBudget * importanceBudget;
+      totalScore += scoreSpace * importanceSpace;
+      totalScore += scoreFuel * importanceFuel;
+      totalScore += scorePower * importancePower;
+      totalScore += scoreSafety * importanceSafety;
+      totalScore += scoreComfort * importanceComfort;
+      totalScore += scoreResale * importanceResale;
+      totalScore += scoreTech * importanceTech;
+
+      // B. Usage Bonus
       if (selectedUsage != null) {
         switch (selectedUsage!) {
           case UsageType.commute:
-            if (car.scoreFuel >= 4.0 || car.scoreComfort >= 4.0) totalScore += 10;
+            if (scoreFuel >= 4.0 || scoreComfort >= 4.0) totalScore += 10;
             break;
           case UsageType.longDistance:
-            if (car.scoreFuel >= 4.0 || car.scoreSafety >= 4.0) totalScore += 10;
+            if (scoreFuel >= 4.0 || scoreSafety >= 4.0) totalScore += 10;
             break;
           case UsageType.family:
-            if (car.scoreSpace >= 4.0 || car.scoreSafety >= 4.0) totalScore += 10;
+            if (scoreSpace >= 4.0 || scoreSafety >= 4.0) totalScore += 10;
             break;
           case UsageType.performance:
-            if (car.scorePower >= 4.0) totalScore += 15; // Higher bonus for niche
+            if (scorePower >= 4.0) totalScore += 15;
             break;
           case UsageType.outdoor:
-             // Specific models known for outdoor/4WD
-            if (car.name.contains('S-Cross') || car.scoreSpace >= 5.0) totalScore += 15;
+            if (v.category.contains('休旅') || scoreSpace >= 5.0) totalScore += 15;
             break;
         }
       }
 
-      // C. Powertrain Preference (Weight: 15 points - critical filter)
+      // C. Powertrain Preference Filter
       if (preferredPowertrain != null) {
-        if (car.type == preferredPowertrain) {
-          totalScore += 15;
-        } else if (preferredPowertrain == PowertrainType.electric && car.name.contains('Kicks')) {
-           // Special case: User wants EV, Kicks e-POWER is closest
-           totalScore += 15;
-        } else if (preferredPowertrain == PowertrainType.gasoline && car.type == PowertrainType.mildHybrid) {
-           // Mild hybrid is close to gas
-           totalScore += 5; 
+        bool match = false;
+        if (preferredPowertrain == PowertrainType.gasoline && !v.engineType.contains('Hybrid')) match = true;
+        if (preferredPowertrain == PowertrainType.hybrid && v.engineType.contains('Hybrid')) match = true;
+        if (preferredPowertrain == PowertrainType.electric && (v.engineType.contains('純電') || v.engineType.contains('e-POWER'))) match = true;
+        
+        if (match) {
+          totalScore += 20;
         } else {
-           // Penalty for mismatch
-           totalScore -= 10;
+          totalScore -= 15;
         }
       }
 
-      return MapEntry(car, totalScore);
+      return {'name': '${v.brand} ${v.model}', 'score': totalScore, 'isAxisA': (scorePower + scoreSpace > 7)};
     }).toList();
 
-    // 2. Sort by Score Descending
-    scoredCars.sort((a, b) => b.value.compareTo(a.value));
-
-    // 3. Return Top 4 names
-    return scoredCars.take(4).map((e) => e.key.name).toList();
+    scoredCars.sort((a, b) => (b['score'] as double).compareTo(a['score'] as double));
+    return scoredCars.take(3).toList();
   }
 
-  String get recommendedAxis {
-    // Determine Axis based on the top recommended car
-    List<String> topModels = recommendedModels;
-    if (topModels.isEmpty) return "Axis B: 穩定務實與都會通勤"; // Default
-
-    var topCar = _carDatabase.firstWhere((c) => c.name == topModels.first);
-    
-    if (topCar.axis == 'A') {
-      return "Axis A: 駕馭靈活與空間機能";
-    } else {
-      return "Axis B: 穩定務實與都會通勤";
-    }
+  String getRecommendedAxis(List<Map<String, dynamic>> rankedResults) {
+    if (rankedResults.isEmpty) return "Axis B: 穩定務實與都會通勤";
+    return rankedResults.first['isAxisA'] == true 
+      ? "Axis A: 駕馭靈活與空間機能" 
+      : "Axis B: 穩定務實與都會通勤";
   }
 
   String getUsageLabel(UsageType type) {
     switch (type) {
-      case UsageType.commute:
-        return '市區通勤 (都會代步)';
-      case UsageType.longDistance:
-        return '長途行駛 (高速巡航)';
-      case UsageType.family:
-        return '家庭載運 (空間需求)';
-      case UsageType.performance:
-        return '熱血操控 (駕駛樂趣)';
-      case UsageType.outdoor:
-        return '戶外休閒 (上山下海)';
+      case UsageType.commute: return '市區通勤 (都會代步)';
+      case UsageType.longDistance: return '長途行駛 (高速巡航)';
+      case UsageType.family: return '家庭載運 (空間需求)';
+      case UsageType.performance: return '熱血操控 (駕駛樂趣)';
+      case UsageType.outdoor: return '戶外休閒 (上山下海)';
     }
   }
   
   String getPowertrainLabel(PowertrainType type) {
      switch (type) {
-      case PowertrainType.gasoline:
-        return '純燃油 (Gasoline)';
-      case PowertrainType.hybrid:
-        return '油電混合 (Hybrid)';
-      case PowertrainType.mildHybrid:
-        return '輕油電 (Mild Hybrid)';
-      case PowertrainType.electric:
-        return '純電動 (EV / e-POWER)';
+      case PowertrainType.gasoline: return '純燃油 (Gasoline)';
+      case PowertrainType.hybrid: return '油電混合 (Hybrid)';
+      case PowertrainType.mildHybrid: return '輕油電 (Mild Hybrid)';
+      case PowertrainType.electric: return '純電動 (EV / e-POWER)';
     }
   }
 }

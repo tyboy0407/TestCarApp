@@ -1,7 +1,7 @@
 # Project Context: Car Evaluation Assistant (testcar)
 
 ## Project Overview
-**Name:** Car Evaluation Assistant (購車評估助手)
+**Name:** Car Evaluation Assistant (Wheelie)
 **Description:** A Flutter application designed to help users evaluate and compare vehicles based on price, specifications, fuel consumption, and ownership costs (including Taiwan-specific tax calculations).
 
 ## Tech Stack

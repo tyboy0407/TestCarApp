@@ -7,6 +7,6 @@ void main() {
     await tester.pumpWidget(const CarEvaluationApp());
 
     // Verify that the title appears.
-    expect(find.text('購車評估助手'), findsOneWidget);
+    expect(find.text('Wheelie'), findsOneWidget);
   });
 }

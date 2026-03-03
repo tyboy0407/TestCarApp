@@ -115,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '請登入以繼續您的購車評估',
+                    'Your best friend Wheelie',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),

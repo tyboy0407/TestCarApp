@@ -21,7 +21,7 @@ class CarEvaluationApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => VehicleProvider()),
       ],
       child: MaterialApp(
-        title: '購車評估助手',
+        title: 'Wheelie',
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(

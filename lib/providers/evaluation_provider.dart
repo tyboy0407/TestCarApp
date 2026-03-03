@@ -57,7 +57,7 @@ class EvaluationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setPreferredPowertrain(PowertrainType type) {
+  void setPreferredPowertrain(PowertrainType? type) {
     _needs.preferredPowertrain = type;
     _saveToPrefs();
     notifyListeners();
