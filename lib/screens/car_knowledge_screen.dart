@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../widgets/knowledge_interactive_widgets.dart';
+import '../providers/vehicle_provider.dart';
+import '../models/vehicle_model.dart';
 
 class CarKnowledgeScreen extends StatelessWidget {
   const CarKnowledgeScreen({super.key});
@@ -349,64 +352,143 @@ class RecommendationsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(16.0),
-      children: [
-        _buildSectionTitle('購車考量象限圖'),
-        const Text(
-          '以下象限圖幫助您快速定位適合的車款。點擊圖中座標可了解各車款特色。',
-          style: TextStyle(fontSize: 14, color: Colors.grey),
-        ),
-        const SizedBox(height: 16),
-        
-        // 象限圖 A：性價比 vs. 安全性能
-        QuadrantChart(
-          title: 'A.【高 CP 值 vs. 安全性能】',
-          xAxisLabel: '總持有成本 (TCO)',
-          yAxisLabel: '安全與科技配備',
-          xLeftLabel: '預算/代步',
-          xRightLabel: '高級/標竿',
-          yBottomLabel: '基本配備',
-          yTopLabel: '頂級安全',
-          quadrantLabels: ['標竿神車', '科技新寵', '純粹代步', '務實選'],
-          items: [
-            QuadrantItem(label: 'Corolla Cross', x: 0.8, y: 0.7, color: Colors.red),
-            QuadrantItem(label: 'Lexus LBX', x: 0.9, y: 0.9, color: Colors.purple),
-            QuadrantItem(label: 'Yaris Cross', x: -0.7, y: -0.5, color: Colors.blue),
-            QuadrantItem(label: 'HR-V e:HEV', x: 0.3, y: 0.6, color: Colors.orange),
-            QuadrantItem(label: 'Kicks e-POWER', x: 0.4, y: 0.5, color: Colors.green),
-            QuadrantItem(label: 'Stonic', x: -0.3, y: 0.2, color: Colors.teal),
+    return Consumer<VehicleProvider>(
+      builder: (context, provider, child) {
+        final vehicles = provider.vehicles;
+        if (vehicles.isEmpty) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.0),
+              child: Column(
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('載入車輛資料中...'),
+                ],
+              ),
+            ),
+          );
+        }
+
+        // Calculate min/max for normalization
+        double minTco = double.infinity;
+        double maxTco = -double.infinity;
+        double minPrice = double.infinity;
+        double maxPrice = -double.infinity;
+        double maxTorque = 0;
+
+        for (var v in vehicles) {
+          double tco = v.price.toDouble() + v.maintenanceCost60k.toDouble() + (v.totalTax * 5).toDouble();
+          if (tco < minTco) minTco = tco;
+          if (tco > maxTco) maxTco = tco;
+          if (v.price < minPrice) minPrice = v.price.toDouble();
+          if (v.price > maxPrice) maxPrice = v.price.toDouble();
+          if (v.torque > maxTorque) maxTorque = v.torque;
+        }
+
+        Color getBrandColor(String brand) {
+          switch (brand.toLowerCase()) {
+            case 'toyota': return Colors.red;
+            case 'ford': return Colors.blue;
+            case 'honda': return Colors.orange;
+            case 'kia': return Colors.teal;
+            case 'hyundai': return Colors.green;
+            case 'lexus': return Colors.purple;
+            case 'suzuki': return Colors.indigo;
+            default: return Colors.grey;
+          }
+        }
+
+        // Generate items for Chart A: CP vs Safety
+        final itemsA = vehicles.map((v) {
+          double tco = v.price.toDouble() + v.maintenanceCost60k.toDouble() + (v.totalTax * 5).toDouble();
+          double x = (maxTco == minTco) ? 0 : (tco - minTco) / (maxTco - minTco) * 1.6 - 0.8;
+          
+          double techScore = (v.reliabilityScore / 100.0 * 0.4) + 
+                            ((v.price - minPrice) / (maxPrice - minPrice + 1) * 0.6);
+          double y = techScore * 1.6 - 0.8;
+
+          return QuadrantItem(
+            label: v.model.split(' ').take(2).join(' '),
+            x: x,
+            y: y,
+            color: getBrandColor(v.brand),
+          );
+        }).toList();
+
+        // Generate items for Chart B: Agility vs Space
+        final itemsB = vehicles.map((v) {
+          // Agility Logic
+          double agilityBase = 0.5;
+          if (v.category == '休旅車') {
+            agilityBase = (v.displacement < 1600) ? 0.8 : 0.3;
+          } else {
+            agilityBase = 0.6;
+          }
+          // Add some variance based on displacement (smaller is more agile)
+          double x = (agilityBase + (1.0 - v.displacement / 2000.0) * 0.2) * 2 - 1.2;
+          x = x.clamp(-0.9, 0.9);
+
+          // Space Logic
+          double spaceBase = (v.category == '休旅車') ? 0.7 : 0.3;
+          // Add variance based on torque as a proxy for size/power
+          double y = (spaceBase + (v.torque / (maxTorque + 1)) * 0.3) * 2 - 1.1;
+          y = y.clamp(-0.9, 0.9);
+
+          return QuadrantItem(
+            label: v.model.split(' ').take(2).join(' '),
+            x: x,
+            y: y,
+            color: getBrandColor(v.brand),
+          );
+        }).toList();
+
+        return ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
+            _buildSectionTitle('購車考量象限圖'),
+            const Text(
+              '以下象限圖幫助您快速定位適合的車款。點擊圖中座標可了解各車款特色。',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            
+            // 象限圖 A：性價比 vs. 安全性能
+            QuadrantChart(
+              title: 'A.【高 CP 值 vs. 安全性能】',
+              xAxisLabel: '總持有成本 (TCO)',
+              yAxisLabel: '安全與科技配備',
+              xLeftLabel: '預算/代步',
+              xRightLabel: '高級/標竿',
+              yBottomLabel: '基本配備',
+              yTopLabel: '頂級安全',
+              quadrantLabels: ['標竿神車', '科技新寵', '純粹代步', '務實選'],
+              items: itemsA,
+            ),
+            const SizedBox(height: 24),
+            
+            // 象限圖 B：都會靈活性 vs. 空間承載力
+            QuadrantChart(
+              title: 'B.【都會靈活性 vs. 空間承載力】',
+              xAxisLabel: '都會便利性 (短車身/易停)',
+              yAxisLabel: '空間多元性 (容積/機能)',
+              xLeftLabel: '長車身/大氣',
+              xRightLabel: '靈活/好停',
+              yBottomLabel: '基本載物',
+              yTopLabel: '空間魔術師',
+              quadrantLabels: ['都會全能', '露營出遊', '傳統房車感', '個人通勤'],
+              items: itemsB,
+            ),
+            
+            const SizedBox(height: 24),
+            _buildSectionTitle('如何使用此圖表？'),
+            _buildCard(
+              title: '象限分析說明',
+              content: '● 象限 A：右上角代表該價位的標竿車款，雖然持有成本較高，但能換取完整的安全科技；左下角則是經濟導向的代步工具。\n\n● 象限 B：左上角適合有露營或家庭大量載物需求的使用者；右下角則適合單身通勤或經常在市區機械車位停車的族群。',
+            ),
           ],
-        ),
-        const SizedBox(height: 24),
-        
-        // 象限圖 B：都會靈活性 vs. 空間承載力
-        QuadrantChart(
-          title: 'B.【都會靈活性 vs. 空間承載力】',
-          xAxisLabel: '都會便利性 (短車身/易停)',
-          yAxisLabel: '空間多元性 (容積/機能)',
-          xLeftLabel: '長車身/大氣',
-          xRightLabel: '靈活/好停',
-          yBottomLabel: '基本載物',
-          yTopLabel: '空間魔術師',
-          quadrantLabels: ['都會全能', '露營出遊', '傳統房車感', '個人通勤'],
-          items: [
-            QuadrantItem(label: 'HR-V', x: 0.4, y: 0.9, color: Colors.orange),
-            QuadrantItem(label: 'Corolla Cross', x: -0.2, y: 0.7, color: Colors.red),
-            QuadrantItem(label: 'Stonic', x: 0.8, y: -0.4, color: Colors.teal),
-            QuadrantItem(label: 'Kicks', x: 0.5, y: 0.3, color: Colors.green),
-            QuadrantItem(label: 'Yaris Cross', x: 0.6, y: 0.6, color: Colors.blue),
-            QuadrantItem(label: 'S-Cross', x: -0.5, y: 0.8, color: Colors.indigo),
-          ],
-        ),
-        
-        const SizedBox(height: 24),
-        _buildSectionTitle('如何使用此圖表？'),
-        _buildCard(
-          title: '象限分析說明',
-          content: '● 象限 A：右上角代表該價位的標竿車款，雖然持有成本較高，但能換取完整的安全科技；左下角則是經濟導向的代步工具。\n\n● 象限 B：左上角適合有露營或家庭大量載物需求的使用者；右下角則適合單身通勤或經常在市區機械車位停車的族群。',
-        ),
-      ],
+        );
+      },
     );
   }
 }

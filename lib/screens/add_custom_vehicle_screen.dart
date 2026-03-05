@@ -28,6 +28,7 @@ class _AddCustomVehicleScreenState extends State<AddCustomVehicleScreen> {
   String _rearSuspension = '';
   String _engineType = '';
   String _category = '轎車';
+  String _imageUrl = '';
   
   // Cost Analysis Fields
   int _maintenanceCost60k = 0;
@@ -53,6 +54,7 @@ class _AddCustomVehicleScreenState extends State<AddCustomVehicleScreen> {
       _rearSuspension = v.rearSuspension;
       _engineType = v.engineType;
       _category = v.category;
+      _imageUrl = v.imageUrls.isNotEmpty ? v.imageUrls.first : '';
       _maintenanceCost60k = v.maintenanceCost60k;
       _bumperPrice = v.partsPrices['前保桿'] ?? 0;
       _headlightPrice = v.partsPrices['頭燈總成'] ?? 0;
@@ -89,6 +91,7 @@ class _AddCustomVehicleScreenState extends State<AddCustomVehicleScreen> {
           '照後鏡': _mirrorPrice,
         },
         reliabilityScore: _reliabilityScore,
+        imageUrls: _imageUrl.isNotEmpty ? [_imageUrl] : [],
       );
 
       final provider = Provider.of<VehicleProvider>(context, listen: false);
@@ -148,6 +151,7 @@ class _AddCustomVehicleScreenState extends State<AddCustomVehicleScreen> {
                 ],
               ),
               _buildNumberField('建議售價 (NTD)', _price, (val) => _price = int.parse(val)),
+              _buildTextField('圖片連結 (URL)', _imageUrl, (val) => _imageUrl = val, required: false),
 
               const SizedBox(height: 20),
               _buildSectionTitle('動力與規格'),
