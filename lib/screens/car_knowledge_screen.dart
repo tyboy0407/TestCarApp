@@ -184,7 +184,7 @@ class TechAnalysisTab extends StatelessWidget {
   }
 }
 
-// 新增：基本術語介紹頁面
+// 基本術語介紹頁面
 class TerminologyTab extends StatelessWidget {
   const TerminologyTab({super.key});
 
@@ -193,64 +193,170 @@ class TerminologyTab extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
-        _buildSectionTitle('車險基本術語'),
+        _buildSectionTitle('常見保險種類'),
 
         _buildExpansionCard(
-          title: '甲式車體險',
-          subtitle: '帝王級的車體保障',
+          title: '強制汽車責任保險(強制險)',
+          subtitle: '法律規定一定要保，沒保不能領牌上路',
           children: [
-            _buildListTile('保障範圍', '包含乙式的所有內容，再加上「第三人非惡意行為」與「不明原因」'),
-            _buildListTile('理賠條件', '「不明原因」理賠的情況如:找不到兇手、沒錄影、沒目擊者，甲式照樣理賠，其餘狀況皆理賠'),
-            _buildListTile('適用對象', '頂級豪車（千萬超跑）、極度愛車的「龜毛」車主，或者是預算非常充足、完全不想為車操心的人。'),
-            _buildListTile('優缺點', '保費最昂貴(6~10萬+)，基本上包含【任意情況】都可以進行理賠。'),
+            _buildListTile('保障範圍', '只有「人」，不賠「車」。'),
+            _buildListTile('理賠條件', '賠「對方」的人傷，以及「我方乘客」的人傷，我方駕駛（駕駛人自己）受傷是不賠的'),
           ],
         ),
 
-        const SizedBox(height: 16),
-
+        const SizedBox(height: 12),
 
         _buildExpansionCard(
-          title: '乙式車體險',
-          subtitle: '常規級的車體保障(最受歡迎)',
+          title: '第三人責任險',
+          subtitle: '你的「資產的防火牆」',
           children: [
-            _buildListTile('保障範圍', '碰撞、擦撞、火災、閃電、雷擊、爆炸、拋擲物或掉落物'),
-            _buildListTile('理賠條件', '路上所遇之常見情況基本上都有理賠，即使是自己倒車入庫撞到自家的鐵捲門，乙式也會賠'),
-            _buildListTile('適用對象', '剛買新車的前 3 到 5 年、對自己技術沒把握，或是擔心停車環境有風險的人。'),
-            _buildListTile('優缺點', '保費一般(3~5萬)，相較於丙式保障的更加全面(自撞or他撞)皆有理賠。'),
+            _buildListTile('保障性質', '這張保單由兩個部分組成，額度是分開計算的。'),
+            _buildListTile('(1)傷害責任', '包含對方的醫療費、看護費、薪資損失、精神慰撫金等。'),
+            _buildListTile('(2)財損責任', '對方的車子維修費、路燈、招牌、甚至名貴寵物的醫療費。'),
           ],
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
 
-
-
-        _buildExpansionCard(
-          title: '丙式車體險',
-          subtitle: '最基本的車體保障',
-          children: [
-            _buildListTile('保障範圍', '僅限與「車」發生碰撞、擦撞所導致的損失。'),
-            _buildListTile('理賠條件', '必須確認對方車輛，且需有報警紀錄（警察處理後開立三聯單）方可理賠。'),
-            _buildListTile('適用對象', '車齡較老（5年以上）、預算有限，或駕駛技術純熟、僅擔心被他人撞到的車主。'),
-            _buildListTile('優缺點', '保費最便宜(1~2萬)，但若自行撞牆、撞電線桿或找不到肇事車輛時，不予理賠。'),
-          ],
-        ),
-        
-        const SizedBox(height: 16),
-        
         _buildExpansionCard(
           title: '超額責任險',
           subtitle: '俗稱「超跑險」',
           children: [
             _buildListTile('保障性質', '屬於「附加險」，必須先投保「第三人責任險」後才能加保。'),
-            _buildListTile('核心功能', '當車禍發生，賠償對方的體傷或財損超過第三人責任險的保額時，由超額險補足差額。'),
-            _buildListTile('適用情境', '不慎撞到勞斯萊斯、法拉利等高價名車，或是造成嚴重人員傷亡，理賠金額動輒數百萬甚至上千萬時。'),
-            _buildListTile('建議保額', '建議至少投保 1,000 萬元，目前年保費僅約 1,000 至 2,000 元，CP值極高。'),
-            _buildListTile('為什麼超額險很重要？', '一般的第三人責任險財損保額通常僅有 20-50 萬，在路上隨便擦撞到進口車就可能不夠賠。超額險能以極低的成本，換取高額的保障，是現代駕駛必備的防護。'),
+            _buildListTile('核心功能', '當前兩層保額賠不夠時（如撞到豪車或嚴重傷亡），由超額險補足。'),
+            _buildListTile('建議保額', '建議至少投保 1,000 萬元，目前年保費僅約 1,000 至 2,000 元。'),
           ],
         ),
-        
-        const SizedBox(height: 24),
 
+        const SizedBox(height: 24),
+        _buildSectionTitle('車體險分類 (賠自己的車)'),
+
+        _buildExpansionCard(
+          title: '甲式車體險',
+          subtitle: '帝王級的保障',
+          children: [
+            _buildListTile('保障範圍', '包含乙式內容，再加上「第三人非惡意行為」與「不明原因」損壞。'),
+            _buildListTile('適用對象', '頂級豪車或極度愛車、預算非常充足的車主。'),
+          ],
+        ),
+
+        const SizedBox(height: 12),
+
+        _buildExpansionCard(
+          title: '乙式車體險',
+          subtitle: '常規級保障 (最受歡迎)',
+          children: [
+            _buildListTile('保障範圍', '碰撞、擦撞、火災、閃電、雷擊、拋擲物或掉落物等。'),
+            _buildListTile('適用對象', '新車前 3 到 5 年、對自己技術沒把握或環境風險高者。'),
+          ],
+        ),
+
+        const SizedBox(height: 12),
+
+        _buildExpansionCard(
+          title: '丙式車體險',
+          subtitle: '最基本的保障',
+          children: [
+            _buildListTile('保障範圍', '僅限「車碰車」。'),
+            _buildListTile('關鍵條件', '必須確認對方車輛，且需有警察開立之三聯單。'),
+          ],
+        ),
+
+        const SizedBox(height: 32),
+        _buildSectionTitle('第三人責任理賠順序圖'),
+        _buildInsuranceLayerFlow(),
+        const SizedBox(height: 48),
+      ],
+    );
+  }
+
+  Widget _buildInsuranceLayerFlow() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        children: [
+          _buildFlowStep(
+            step: '1',
+            title: '第一層：強制險',
+            desc: '優先賠付人身傷害\n(上限 20萬醫療 / 200萬死殘)',
+            color: Colors.red.shade600,
+            isLast: false,
+          ),
+          _buildFlowStep(
+            step: '2',
+            title: '第二層：第三人責任險',
+            desc: '補足強制險不足的人身部分\n並負擔所有「財損」賠償',
+            color: Colors.orange.shade600,
+            isLast: false,
+          ),
+          _buildFlowStep(
+            step: '3',
+            title: '第三層：超額責任險',
+            desc: '【最後防線】當前兩層保額全數賠完時才啟動\n(應付超高額賠償如撞超跑)',
+            color: Colors.yellow.shade700,
+            isLast: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFlowStep({
+    required String step,
+    required String title,
+    required String desc,
+    required Color color,
+    required bool isLast,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          children: [
+            Container(
+              width: 32,
+              height: 32,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                step,
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            ),
+            if (!isLast)
+              Container(
+                width: 2,
+                height: 50,
+                color: color.withOpacity(0.3),
+              ),
+          ],
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                desc,
+                style: TextStyle(fontSize: 13, height: 1.4, color: Colors.grey.shade700),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
       ],
     );
   }
