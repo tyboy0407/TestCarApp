@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/needs_model.dart';
 import '../providers/evaluation_provider.dart';
 import '../providers/vehicle_provider.dart';
+import 'vbti_test_screen.dart';
 
 class NeedsAssessmentScreen extends StatelessWidget {
   const NeedsAssessmentScreen({super.key});
@@ -14,63 +15,78 @@ class NeedsAssessmentScreen extends StatelessWidget {
     final needs = evalProvider.needs;
     final allVehicles = vehicleProvider.vehicles;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 1. 主要用途
-          _buildCard(
-            context,
-            title: '1. 您主要的用車場景？',
-            icon: Icons.directions_car,
-            child: Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: UsageType.values.map((type) {
-                final isSelected = needs.selectedUsage == type;
-                return ChoiceChip(
-                  label: Text(needs.getUsageLabel(type)),
-                  selected: isSelected,
-                  selectedColor: Colors.black,
-                  labelStyle: TextStyle(
-                    color: isSelected ? Colors.white : Colors.black,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                  onSelected: (selected) {
-                    if (selected) evalProvider.setUsage(type);
-                  },
-                );
-              }).toList(),
+    return Scaffold(
+      backgroundColor: Colors.transparent, // 讓背景由上層控制
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 1. 主要用途
+            _buildCard(
+              context,
+              title: '1. 您主要的用車場景？',
+              icon: Icons.directions_car,
+              child: Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: UsageType.values.map((type) {
+                  final isSelected = needs.selectedUsage == type;
+                  return ChoiceChip(
+                    label: Text(needs.getUsageLabel(type)),
+                    selected: isSelected,
+                    selectedColor: Colors.black,
+                    labelStyle: TextStyle(
+                      color: isSelected ? Colors.white : Colors.black,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                    onSelected: (selected) {
+                      if (selected) evalProvider.setUsage(type);
+                    },
+                  );
+                }).toList(),
+              ),
             ),
-          ),
-          
-          const SizedBox(height: 16),
+            
+            const SizedBox(height: 16),
 
-          // 2. 購車考量權重
-          _buildCard(
-            context,
-            title: '2. 各項指標的重要性 (1-5分)',
-            icon: Icons.tune,
-            child: Column(
-              children: [
-                _buildSliderRow(context, '預算敏感度', needs.importanceBudget, (v) => evalProvider.setImportanceBudget(v), Icons.attach_money),
-                _buildSliderRow(context, '空間機能性', needs.importanceSpace, (v) => evalProvider.setImportanceSpace(v), Icons.aspect_ratio),
-                _buildSliderRow(context, '油耗經濟性', needs.importanceFuel, (v) => evalProvider.setImportanceFuel(v), Icons.local_gas_station),
-                _buildSliderRow(context, '動力操控感', needs.importancePower, (v) => evalProvider.setImportancePower(v), Icons.speed),
-                _buildSliderRow(context, '乘坐舒適度', needs.importanceComfort, (v) => evalProvider.setImportanceComfort(v), Icons.airline_seat_recline_normal),
-                _buildSliderRow(context, '二手保值性', needs.importanceResale, (v) => evalProvider.setImportanceResale(v), Icons.currency_exchange),
-                _buildSliderRow(context, '科技與輔助', needs.importanceTech, (v) => evalProvider.setImportanceTech(v), Icons.smart_toy), 
-              ],
+            // 2. 購車考量權重
+            _buildCard(
+              context,
+              title: '2. 各項指標的重要性 (1-5分)',
+              icon: Icons.tune,
+              child: Column(
+                children: [
+                  _buildSliderRow(context, '預算敏感度', needs.importanceBudget, (v) => evalProvider.setImportanceBudget(v), Icons.attach_money),
+                  _buildSliderRow(context, '空間機能性', needs.importanceSpace, (v) => evalProvider.setImportanceSpace(v), Icons.aspect_ratio),
+                  _buildSliderRow(context, '油耗經濟性', needs.importanceFuel, (v) => evalProvider.setImportanceFuel(v), Icons.local_gas_station),
+                  _buildSliderRow(context, '動力操控感', needs.importancePower, (v) => evalProvider.setImportancePower(v), Icons.speed),
+                  _buildSliderRow(context, '乘坐舒適度', needs.importanceComfort, (v) => evalProvider.setImportanceComfort(v), Icons.airline_seat_recline_normal),
+                  _buildSliderRow(context, '二手保值性', needs.importanceResale, (v) => evalProvider.setImportanceResale(v), Icons.currency_exchange),
+                  _buildSliderRow(context, '科技與輔助', needs.importanceTech, (v) => evalProvider.setImportanceTech(v), Icons.smart_toy), 
+                ],
+              ),
             ),
-          ),
 
-          const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-          // 3. 分析結果
-          if (needs.selectedUsage != null)
-            _buildResultCard(context, needs, allVehicles),
-        ],
+            // 3. 分析結果
+            if (needs.selectedUsage != null)
+              _buildResultCard(context, needs, allVehicles),
+            
+            const SizedBox(height: 80), // 預留空間給 FAB
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const VBTITestScreen()),
+        ),
+        backgroundColor: Colors.black,
+        icon: const Icon(Icons.psychology, color: Colors.white),
+        label: const Text('VBTI 測驗', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        elevation: 4,
       ),
     );
   }
@@ -135,7 +151,6 @@ class NeedsAssessmentScreen extends StatelessWidget {
   }
 
   Widget _buildResultCard(BuildContext context, NeedsModel needs, List<dynamic> allVehicles) {
-    // Dynamically calculate results based on the real vehicle data from vehicles.json
     final rankedResults = needs.calculateRankedResults(allVehicles.map((e) => e).toList().cast());
     final axis = needs.getRecommendedAxis(rankedResults);
     final isAxisA = axis.contains("Axis A");
@@ -164,7 +179,6 @@ class NeedsAssessmentScreen extends StatelessWidget {
           if (rankedResults.isEmpty)
             const Text('暫無符合條件的車款', style: TextStyle(color: Colors.black54)),
 
-          // Ranking List
           ...List.generate(rankedResults.length, (index) {
             final item = rankedResults[index];
             final rankLabels = ['第一名', '第二名', '第三名'];
