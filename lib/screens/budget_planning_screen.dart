@@ -5,6 +5,7 @@ import 'dart:math';
 import '../providers/evaluation_provider.dart';
 import '../providers/vehicle_provider.dart';
 import '../models/vehicle_model.dart';
+import '../models/financial_model.dart';
 
 class BudgetPlanningScreen extends StatelessWidget {
   const BudgetPlanningScreen({super.key});
@@ -58,6 +59,9 @@ class LoanCalculatorTab extends StatelessWidget {
         children: [
           _buildSectionTitle(context, '💰 購車與貸款試算'),
           _buildInputCard([
+            _buildTextField('月收入 (NTD)', f.monthlyIncome.toStringAsFixed(0), (v) => provider.setMonthlyIncome(double.tryParse(v) ?? 0)),
+            _buildTextField('月生活支出 (NTD)', f.monthlyLivingExpenses.toStringAsFixed(0), (v) => provider.setMonthlyLivingExpenses(double.tryParse(v) ?? 0)),
+            const Divider(height: 32),
             _buildTextField('車價 (萬元)', f.vehiclePrice.toString(), (v) => provider.setVehiclePrice(double.tryParse(v) ?? 0)),
             _buildTextField('頭期款 (萬元)', f.downPayment.toString(), (v) => provider.setDownPayment(double.tryParse(v) ?? 0)),
             _buildTextField('貸款期數 (月)', f.loanTermMonths.toString(), (v) => provider.setLoanTerm(int.tryParse(v) ?? 0)),
@@ -65,12 +69,15 @@ class LoanCalculatorTab extends StatelessWidget {
           ]),
           
           const SizedBox(height: 16),
+          _buildDebtRatioWarning(f, currencyFormat),
+          const SizedBox(height: 16),
           _buildResultCard('每月貸款負擔', 'NT\$ ${currencyFormat.format(f.monthlyPayment.round())}', Colors.orange),
 
           const Divider(height: 40),
           
           _buildSectionTitle(context, '⛽ 持有成本估算 (月度)'),
           _buildInputCard([
+            _buildTextField('引擎排氣量 (cc)', f.displacement.toString(), (v) => provider.setDisplacement(int.tryParse(v) ?? 0)),
             _buildTextField('月行駛里程 (km)', f.monthlyMileage.toString(), (v) => provider.setMonthlyMileage(double.tryParse(v) ?? 0)),
             _buildTextField('能耗 (km/L 或 km/kWh)', f.fuelEfficiency.toString(), (v) => provider.setFuelEfficiency(double.tryParse(v) ?? 0)),
             _buildTextField('能源單價 (元)', f.energyPrice.toString(), (v) => provider.setEnergyPrice(double.tryParse(v) ?? 0)),
@@ -78,14 +85,11 @@ class LoanCalculatorTab extends StatelessWidget {
             const Divider(),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
                 children: [
-                  const Text('預估每月能源支出:', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey)),
-                  Text(
-                    'NT\$ ${currencyFormat.format(f.monthlyEnergyCost.round())}', 
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.blueAccent)
-                  ),
+                  _buildSummaryRow('預估年度牌燃稅:', 'NT\$ ${currencyFormat.format(f.tax.round())}', Colors.blueGrey),
+                  const SizedBox(height: 4),
+                  _buildSummaryRow('預估每月能源支出:', 'NT\$ ${currencyFormat.format(f.monthlyEnergyCost.round())}', Colors.blueAccent),
                 ],
               ),
             ),
@@ -100,7 +104,124 @@ class LoanCalculatorTab extends StatelessWidget {
               style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ),
+          
+          const SizedBox(height: 24),
+          _buildTcoCard(context, f, currencyFormat),
+          
           const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDebtRatioWarning(FinancialModel f, NumberFormat format) {
+    final ratio = f.paymentToIncomeRatio;
+    final isWarning = f.isRatioWarning;
+    final percentString = "${(ratio * 100).toStringAsFixed(1)}%";
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isWarning ? Colors.red.shade50 : Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: isWarning ? Colors.red.shade200 : Colors.blue.shade200),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isWarning ? Icons.warning_amber_rounded : Icons.info_outline,
+            color: isWarning ? Colors.red : Colors.blue,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '每月貸款佔收入比：$percentString',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isWarning ? Colors.red : Colors.blue.shade800,
+                  ),
+                ),
+                Text(
+                  isWarning 
+                    ? '建議貸款不超過收入 20% 以維持生活品質。' 
+                    : '目前的還款佔比在安全範圍內。',
+                  style: TextStyle(fontSize: 12, color: isWarning ? Colors.red.shade700 : Colors.blue.shade700),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSummaryRow(String label, String value, Color color) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey, fontSize: 13)),
+        Text(
+          value, 
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: color)
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTcoCard(BuildContext context, FinancialModel f, NumberFormat currencyFormat) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.green.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.green.shade200, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.summarize, color: Colors.green),
+              SizedBox(width: 8),
+              Text('總持有成本分析 (首年概估)', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.green)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _buildTcoRow('1. 車價總額', (f.vehiclePrice * 10000).round(), currencyFormat),
+          _buildTcoRow('2. 牌燃稅', f.tax.round(), currencyFormat),
+          _buildTcoRow('3. 保險費 (預估)', f.insurance.round(), currencyFormat),
+          _buildTcoRow('4. 年度能源支出', f.annualEnergyCost.round(), currencyFormat),
+          _buildTcoRow('5. 定期保養 (年均)', f.maintenance.round(), currencyFormat),
+          const Divider(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('總計 (TCO):', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              Text(
+                'NT\$ ${currencyFormat.format(f.totalCostOfOwnership.round())}',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22, color: Colors.green),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          const Text('※ 公式: 車價 + 牌燃稅 + 保險 + 油資 + 保養', style: TextStyle(fontSize: 11, color: Colors.grey)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTcoRow(String label, int value, NumberFormat format) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: const TextStyle(color: Colors.black87)),
+          Text('\$${format.format(value)}', style: const TextStyle(fontWeight: FontWeight.w500)),
         ],
       ),
     );

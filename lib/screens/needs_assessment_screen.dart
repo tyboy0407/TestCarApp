@@ -65,33 +65,9 @@ class NeedsAssessmentScreen extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 16),
-
-          // 3. 偏好動力 (Optional)
-          _buildCard(
-            context,
-            title: '3. 特殊動力偏好 (關鍵過濾)',
-            icon: Icons.electric_bolt,
-            child: DropdownButtonFormField<PowertrainType>(
-              value: needs.preferredPowertrain,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              ),
-              items: [
-                const DropdownMenuItem(value: null, child: Text("無特別偏好")),
-                ...PowertrainType.values.map((type) => DropdownMenuItem(
-                  value: type,
-                  child: Text(needs.getPowertrainLabel(type)),
-                )),
-              ],
-              onChanged: (val) => evalProvider.setPreferredPowertrain(val), 
-            ),
-          ),
-
           const SizedBox(height: 24),
 
-          // 4. 分析結果
+          // 3. 分析結果
           if (needs.selectedUsage != null)
             _buildResultCard(context, needs, allVehicles),
         ],

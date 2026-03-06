@@ -8,16 +8,8 @@ enum UsageType {
   outdoor, // 戶外休閒
 }
 
-enum PowertrainType {
-  gasoline, // 燃油
-  hybrid, // 油電 (Full Hybrid)
-  mildHybrid, // 輕油電
-  electric, // 純電 (For Kicks e-POWER logic)
-}
-
 class NeedsModel {
   UsageType? selectedUsage;
-  PowertrainType? preferredPowertrain;
 
   // Criteria (Score 1-5, set by user sliders)
   double importanceBudget = 3.0; 
@@ -29,12 +21,11 @@ class NeedsModel {
   double importanceResale = 3.0; 
   double importanceTech = 3.0; // New: 科技與輔助駕駛
 
-  NeedsModel({this.selectedUsage, this.preferredPowertrain});
+  NeedsModel({this.selectedUsage});
 
   Map<String, dynamic> toJson() {
     return {
       'selectedUsage': selectedUsage?.index,
-      'preferredPowertrain': preferredPowertrain?.index,
       'importanceBudget': importanceBudget,
       'importanceSpace': importanceSpace,
       'importanceFuel': importanceFuel,
@@ -49,7 +40,6 @@ class NeedsModel {
   factory NeedsModel.fromJson(Map<String, dynamic> json) {
     final model = NeedsModel(
       selectedUsage: json['selectedUsage'] != null ? UsageType.values[json['selectedUsage']] : null,
-      preferredPowertrain: json['preferredPowertrain'] != null ? PowertrainType.values[json['preferredPowertrain']] : null,
     );
     model.importanceBudget = (json['importanceBudget'] as num?)?.toDouble() ?? 3.0;
     model.importanceSpace = (json['importanceSpace'] as num?)?.toDouble() ?? 3.0;
@@ -111,20 +101,6 @@ class NeedsModel {
         }
       }
 
-      // C. Powertrain Preference Filter
-      if (preferredPowertrain != null) {
-        bool match = false;
-        if (preferredPowertrain == PowertrainType.gasoline && !v.engineType.contains('Hybrid')) match = true;
-        if (preferredPowertrain == PowertrainType.hybrid && v.engineType.contains('Hybrid')) match = true;
-        if (preferredPowertrain == PowertrainType.electric && (v.engineType.contains('純電') || v.engineType.contains('e-POWER'))) match = true;
-        
-        if (match) {
-          totalScore += 20;
-        } else {
-          totalScore -= 15;
-        }
-      }
-
       return {'name': '${v.brand} ${v.model}', 'score': totalScore, 'isAxisA': (scorePower + scoreSpace > 7)};
     }).toList();
 
@@ -146,15 +122,6 @@ class NeedsModel {
       case UsageType.family: return '家庭載運 (空間需求)';
       case UsageType.performance: return '熱血操控 (駕駛樂趣)';
       case UsageType.outdoor: return '戶外休閒 (上山下海)';
-    }
-  }
-  
-  String getPowertrainLabel(PowertrainType type) {
-     switch (type) {
-      case PowertrainType.gasoline: return '純燃油 (Gasoline)';
-      case PowertrainType.hybrid: return '油電混合 (Hybrid)';
-      case PowertrainType.mildHybrid: return '輕油電 (Mild Hybrid)';
-      case PowertrainType.electric: return '純電動 (EV / e-POWER)';
     }
   }
 }

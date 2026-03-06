@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import 'login_screen.dart';
 import 'needs_assessment_screen.dart';
 import 'budget_planning_screen.dart';
 import 'car_comparison_screen.dart';
@@ -60,10 +61,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       onPressed: () {
                         Navigator.pop(context); // 關閉對話框
                         Provider.of<AuthProvider>(context, listen: false).logout();
+                        // 跳轉回登入頁面並移除所有舊頁面
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                          (route) => false,
+                        );
                       },
                       style: TextButton.styleFrom(foregroundColor: Colors.red),
                       child: const Text('確定'),
                     ),
+
                   ],
                 ),
               );

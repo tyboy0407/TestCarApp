@@ -57,12 +57,6 @@ class EvaluationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setPreferredPowertrain(PowertrainType? type) {
-    _needs.preferredPowertrain = type;
-    _saveToPrefs();
-    notifyListeners();
-  }
-
   void setImportanceBudget(double val) { _needs.importanceBudget = val; _saveToPrefs(); notifyListeners(); }
   void setImportanceSpace(double val) { _needs.importanceSpace = val; _saveToPrefs(); notifyListeners(); }
   void setImportanceFuel(double val) { _needs.importanceFuel = val; _saveToPrefs(); notifyListeners(); }
@@ -101,6 +95,20 @@ class EvaluationProvider with ChangeNotifier {
     _saveToPrefs();
     notifyListeners();
   }
+
+  // 更新現有收入
+  void setMonthlyIncome(double income) {
+    _financial.monthlyIncome = income;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
+  // 更新現有生活支出
+  void setMonthlyLivingExpenses(double expenses) {
+    _financial.monthlyLivingExpenses = expenses;
+    _saveToPrefs();
+    notifyListeners();
+  }
   
   // 更新月里程
   void setMonthlyMileage(double mileage) {
@@ -123,14 +131,21 @@ class EvaluationProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  // 更新 CC 數
+  void setDisplacement(int cc) {
+    _financial.displacement = cc;
+    _saveToPrefs();
+    notifyListeners();
+  }
+
   // 更新其他持有成本 (一次性更新多個較小的項目)
   void updateHoldingCosts({
-    double? tax,
+    double? displacement, // 改為接受 displacement
     double? maintenance,
     double? insurance,
     double? otherCosts,
   }) {
-    if (tax != null) _financial.tax = tax;
+    if (displacement != null) _financial.displacement = displacement.toInt();
     if (maintenance != null) _financial.maintenance = maintenance;
     if (insurance != null) _financial.insurance = insurance;
     if (otherCosts != null) _financial.otherCosts = otherCosts;

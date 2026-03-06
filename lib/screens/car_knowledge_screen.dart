@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../widgets/knowledge_interactive_widgets.dart';
-import '../providers/vehicle_provider.dart';
-import '../models/vehicle_model.dart';
 
 class CarKnowledgeScreen extends StatelessWidget {
   const CarKnowledgeScreen({super.key});
@@ -10,20 +7,19 @@ class CarKnowledgeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 3, // 增加為 3 個 Tab
       child: Scaffold(
         appBar: AppBar(
           title: const Text('購車知識庫', style: TextStyle(fontWeight: FontWeight.bold)),
           bottom: const TabBar(
-            isScrollable: true,
+            isScrollable: false,
             labelColor: Colors.black,
             unselectedLabelColor: Colors.grey,
             indicatorColor: Colors.black,
             tabs: [
               Tab(text: '市場概況'),
               Tab(text: '技術解析'),
-              Tab(text: '規格比較'),
-              Tab(text: '購車建議'),
+              Tab(text: '基本術語'), // 新增 Tab
             ],
           ),
         ),
@@ -31,8 +27,7 @@ class CarKnowledgeScreen extends StatelessWidget {
           children: [
             MarketOverviewTab(),
             TechAnalysisTab(),
-            ComparisonTableTab(),
-            RecommendationsTab(),
+            TerminologyTab(), // 新增 頁面
           ],
         ),
       ),
@@ -90,7 +85,7 @@ class MarketOverviewTab extends StatelessWidget {
     required Color color,
   }) {
     return SizedBox(
-      height: 180, // Fixed height for flip card
+      height: 180,
       child: KnowledgeFlipCard(
         front: Container(
           decoration: BoxDecoration(
@@ -189,306 +184,74 @@ class TechAnalysisTab extends StatelessWidget {
   }
 }
 
-class ComparisonTableTab extends StatefulWidget {
-  const ComparisonTableTab({super.key});
-
-  @override
-  State<ComparisonTableTab> createState() => _ComparisonTableTabState();
-}
-
-class _ComparisonTableTabState extends State<ComparisonTableTab> {
-  int _selectedChart = 0;
+// 新增：基本術語介紹頁面
+class TerminologyTab extends StatelessWidget {
+  const TerminologyTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSectionTitle('可視化數據對比'),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _buildFilterChip('平均油耗 (km/L)', 0),
-                      const SizedBox(width: 8),
-                      _buildFilterChip('入手門檻 (萬)', 1),
-                      const SizedBox(width: 8),
-                      _buildFilterChip('最大扭力 (kg-m)', 2),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _buildChartContent(),
-              ],
-            ),
-          ),
-          const Divider(),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildSectionTitle('完整規格表'),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    headingRowColor: MaterialStateProperty.all(Colors.grey.shade200),
-                    columns: const [
-                      DataColumn(label: Text('車款', style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(label: Text('動力形式', style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(label: Text('排氣量', style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(label: Text('油耗 (km/L)', style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(label: Text('價格 (萬)', style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(label: Text('核心優勢', style: TextStyle(fontWeight: FontWeight.bold))),
-                    ],
-                    rows: [
-                      _buildDataRow('Honda HR-V', 'Full Hybrid', '1.5L', '23.5', '90.9-98.9', '空間機能、類電動感'),
-                      _buildDataRow('Toyota CC', 'Full Hybrid', '1.8L', '23.5', '98.5-98.9', '舒適、高保值'),
-                      _buildDataRow('Nissan Kicks', 'Series Hybrid', '1.2L', '22.0', '104.9', '純電驅動感、e-Pedal'),
-                      _buildDataRow('Hyundai Kona', 'Full Hybrid', '1.6L', '24-26', '96-102', 'DCT變速箱、歐系操控'),
-                      _buildDataRow('Suzuki S-Cross', '48V Mild', '1.4T', '19.4', '98-114', '四驅、歐製剛性'),
-                      _buildDataRow('Lexus LBX', 'Full Hybrid', '1.5L', '26.4', '129.9+', '豪華質感、油耗王者'),
-                      _buildDataRow('Yaris Cross', '汽油', '1.5L', '17.5', '72.5-83.5', '價格親民、大空間'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+    return ListView(
+      padding: const EdgeInsets.all(16.0),
+      children: [
+        _buildSectionTitle('車險基本術語'),
 
-  Widget _buildFilterChip(String label, int index) {
-    return FilterChip(
-      label: Text(label),
-      selected: _selectedChart == index,
-      onSelected: (bool selected) {
-        setState(() {
-          _selectedChart = index;
-        });
-      },
-      selectedColor: Colors.black,
-      labelStyle: TextStyle(
-        color: _selectedChart == index ? Colors.white : Colors.black,
-        fontWeight: _selectedChart == index ? FontWeight.bold : FontWeight.normal,
-      ),
-      checkmarkColor: Colors.white,
-    );
-  }
-
-  Widget _buildChartContent() {
-    switch (_selectedChart) {
-      case 0:
-        return InteractiveBarChart(
-          title: '平均油耗表現',
-          unit: 'km/L',
-          maxValue: 30,
-          items: [
-            BarChartItem(label: 'Lexus LBX', value: 26.4, displayValue: '26.4', color: Colors.green.shade700),
-            BarChartItem(label: 'Hyundai Kona', value: 25.0, displayValue: '25.0 (est)', color: Colors.green.shade600),
-            BarChartItem(label: 'Honda HR-V', value: 23.5, displayValue: '23.5', color: Colors.green),
-            BarChartItem(label: 'Toyota CC', value: 23.5, displayValue: '23.5', color: Colors.green),
-            BarChartItem(label: 'Nissan Kicks', value: 22.0, displayValue: '22.0', color: Colors.green.shade400),
-            BarChartItem(label: 'Suzuki S-Cross', value: 19.4, displayValue: '19.4', color: Colors.green.shade300),
-            BarChartItem(label: 'Yaris Cross', value: 17.5, displayValue: '17.5', color: Colors.orange.shade300),
-          ],
-        );
-      case 1:
-        return InteractiveBarChart(
-          title: '入手門檻',
-          unit: '萬 (TWD)',
-          maxValue: 140,
-          items: [
-            BarChartItem(label: 'Yaris Cross', value: 72.5, displayValue: '72.5', color: Colors.blue.shade300),
-            BarChartItem(label: 'Honda HR-V', value: 90.9, displayValue: '90.9', color: Colors.blue.shade400),
-            BarChartItem(label: 'Hyundai Kona', value: 96.0, displayValue: '96.0', color: Colors.blue.shade500),
-            BarChartItem(label: 'Suzuki S-Cross', value: 98.0, displayValue: '98.0', color: Colors.blue.shade600),
-            BarChartItem(label: 'Toyota CC', value: 98.5, displayValue: '98.5', color: Colors.blue.shade700),
-            BarChartItem(label: 'Nissan Kicks', value: 104.9, displayValue: '104.9', color: Colors.indigo.shade400),
-            BarChartItem(label: 'Lexus LBX', value: 129.9, displayValue: '129.9', color: Colors.indigo.shade900),
-          ],
-        );
-      case 2:
-        return InteractiveBarChart(
-          title: '最大扭力表現',
-          unit: 'kg-m',
-          maxValue: 30,
-          items: [
-            BarChartItem(label: 'Nissan Kicks', value: 28.5, displayValue: '28.5', color: Colors.red.shade900),
-            BarChartItem(label: 'Hyundai Kona', value: 27.0, displayValue: '27.0', color: Colors.red.shade700),
-            BarChartItem(label: 'Honda HR-V', value: 25.8, displayValue: '25.8', color: Colors.red.shade600),
-            BarChartItem(label: 'Suzuki S-Cross', value: 23.9, displayValue: '23.9', color: Colors.red.shade400),
-            BarChartItem(label: 'Lexus LBX', value: 18.8, displayValue: '18.8', color: Colors.orange.shade800),
-            BarChartItem(label: 'Yaris Cross', value: 14.1, displayValue: '14.1', color: Colors.grey),
-            BarChartItem(label: 'Toyota CC', value: 16.6, displayValue: '16.6 (引擎)', color: Colors.grey),
-          ],
-        );
-      default:
-        return const SizedBox.shrink();
-    }
-  }
-
-  DataRow _buildDataRow(String car, String type, String cc, String eff, String price, String pros) {
-    return DataRow(cells: [
-      DataCell(Text(car, style: const TextStyle(fontWeight: FontWeight.w600))),
-      DataCell(Text(type)),
-      DataCell(Text(cc)),
-      DataCell(Text(eff)),
-      DataCell(Text(price)),
-      DataCell(Text(pros)),
-    ]);
-  }
-}
-
-class RecommendationsTab extends StatelessWidget {
-  const RecommendationsTab({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<VehicleProvider>(
-      builder: (context, provider, child) {
-        final vehicles = provider.vehicles;
-        if (vehicles.isEmpty) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(32.0),
-              child: Column(
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('載入車輛資料中...'),
-                ],
-              ),
-            ),
-          );
-        }
-
-        // Calculate min/max for normalization
-        double minTco = double.infinity;
-        double maxTco = -double.infinity;
-        double minPrice = double.infinity;
-        double maxPrice = -double.infinity;
-        double maxTorque = 0;
-
-        for (var v in vehicles) {
-          double tco = v.price.toDouble() + v.maintenanceCost60k.toDouble() + (v.totalTax * 5).toDouble();
-          if (tco < minTco) minTco = tco;
-          if (tco > maxTco) maxTco = tco;
-          if (v.price < minPrice) minPrice = v.price.toDouble();
-          if (v.price > maxPrice) maxPrice = v.price.toDouble();
-          if (v.torque > maxTorque) maxTorque = v.torque;
-        }
-
-        Color getBrandColor(String brand) {
-          switch (brand.toLowerCase()) {
-            case 'toyota': return Colors.red;
-            case 'ford': return Colors.blue;
-            case 'honda': return Colors.orange;
-            case 'kia': return Colors.teal;
-            case 'hyundai': return Colors.green;
-            case 'lexus': return Colors.purple;
-            case 'suzuki': return Colors.indigo;
-            default: return Colors.grey;
-          }
-        }
-
-        // Generate items for Chart A: CP vs Safety
-        final itemsA = vehicles.map((v) {
-          double tco = v.price.toDouble() + v.maintenanceCost60k.toDouble() + (v.totalTax * 5).toDouble();
-          double x = (maxTco == minTco) ? 0 : (tco - minTco) / (maxTco - minTco) * 1.6 - 0.8;
-          
-          double techScore = (v.reliabilityScore / 100.0 * 0.4) + 
-                            ((v.price - minPrice) / (maxPrice - minPrice + 1) * 0.6);
-          double y = techScore * 1.6 - 0.8;
-
-          return QuadrantItem(
-            label: v.model.split(' ').take(2).join(' '),
-            x: x,
-            y: y,
-            color: getBrandColor(v.brand),
-          );
-        }).toList();
-
-        // Generate items for Chart B: Agility vs Space
-        final itemsB = vehicles.map((v) {
-          // Agility Logic
-          double agilityBase = 0.5;
-          if (v.category == '休旅車') {
-            agilityBase = (v.displacement < 1600) ? 0.8 : 0.3;
-          } else {
-            agilityBase = 0.6;
-          }
-          // Add some variance based on displacement (smaller is more agile)
-          double x = (agilityBase + (1.0 - v.displacement / 2000.0) * 0.2) * 2 - 1.2;
-          x = x.clamp(-0.9, 0.9);
-
-          // Space Logic
-          double spaceBase = (v.category == '休旅車') ? 0.7 : 0.3;
-          // Add variance based on torque as a proxy for size/power
-          double y = (spaceBase + (v.torque / (maxTorque + 1)) * 0.3) * 2 - 1.1;
-          y = y.clamp(-0.9, 0.9);
-
-          return QuadrantItem(
-            label: v.model.split(' ').take(2).join(' '),
-            x: x,
-            y: y,
-            color: getBrandColor(v.brand),
-          );
-        }).toList();
-
-        return ListView(
-          padding: const EdgeInsets.all(16.0),
+        _buildExpansionCard(
+          title: '甲式車體險',
+          subtitle: '帝王級的車體保障',
           children: [
-            _buildSectionTitle('購車考量象限圖'),
-            const Text(
-              '以下象限圖幫助您快速定位適合的車款。點擊圖中座標可了解各車款特色。',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
-            
-            // 象限圖 A：性價比 vs. 安全性能
-            QuadrantChart(
-              title: 'A.【高 CP 值 vs. 安全性能】',
-              xAxisLabel: '總持有成本 (TCO)',
-              yAxisLabel: '安全與科技配備',
-              xLeftLabel: '預算/代步',
-              xRightLabel: '高級/標竿',
-              yBottomLabel: '基本配備',
-              yTopLabel: '頂級安全',
-              quadrantLabels: ['標竿神車', '科技新寵', '純粹代步', '務實選'],
-              items: itemsA,
-            ),
-            const SizedBox(height: 24),
-            
-            // 象限圖 B：都會靈活性 vs. 空間承載力
-            QuadrantChart(
-              title: 'B.【都會靈活性 vs. 空間承載力】',
-              xAxisLabel: '都會便利性 (短車身/易停)',
-              yAxisLabel: '空間多元性 (容積/機能)',
-              xLeftLabel: '長車身/大氣',
-              xRightLabel: '靈活/好停',
-              yBottomLabel: '基本載物',
-              yTopLabel: '空間魔術師',
-              quadrantLabels: ['都會全能', '露營出遊', '傳統房車感', '個人通勤'],
-              items: itemsB,
-            ),
-            
-            const SizedBox(height: 24),
-            _buildSectionTitle('如何使用此圖表？'),
-            _buildCard(
-              title: '象限分析說明',
-              content: '● 象限 A：右上角代表該價位的標竿車款，雖然持有成本較高，但能換取完整的安全科技；左下角則是經濟導向的代步工具。\n\n● 象限 B：左上角適合有露營或家庭大量載物需求的使用者；右下角則適合單身通勤或經常在市區機械車位停車的族群。',
-            ),
+            _buildListTile('保障範圍', '包含乙式的所有內容，再加上「第三人非惡意行為」與「不明原因」'),
+            _buildListTile('理賠條件', '「不明原因」理賠的情況如:找不到兇手、沒錄影、沒目擊者，甲式照樣理賠，其餘狀況皆理賠'),
+            _buildListTile('適用對象', '頂級豪車（千萬超跑）、極度愛車的「龜毛」車主，或者是預算非常充足、完全不想為車操心的人。'),
+            _buildListTile('優缺點', '保費最昂貴(6~10萬+)，基本上包含【任意情況】都可以進行理賠。'),
           ],
-        );
-      },
+        ),
+
+        const SizedBox(height: 16),
+
+
+        _buildExpansionCard(
+          title: '乙式車體險',
+          subtitle: '常規級的車體保障(最受歡迎)',
+          children: [
+            _buildListTile('保障範圍', '碰撞、擦撞、火災、閃電、雷擊、爆炸、拋擲物或掉落物'),
+            _buildListTile('理賠條件', '路上所遇之常見情況基本上都有理賠，即使是自己倒車入庫撞到自家的鐵捲門，乙式也會賠'),
+            _buildListTile('適用對象', '剛買新車的前 3 到 5 年、對自己技術沒把握，或是擔心停車環境有風險的人。'),
+            _buildListTile('優缺點', '保費一般(3~5萬)，相較於丙式保障的更加全面(自撞or他撞)皆有理賠。'),
+          ],
+        ),
+
+        const SizedBox(height: 16),
+
+
+
+        _buildExpansionCard(
+          title: '丙式車體險',
+          subtitle: '最基本的車體保障',
+          children: [
+            _buildListTile('保障範圍', '僅限與「車」發生碰撞、擦撞所導致的損失。'),
+            _buildListTile('理賠條件', '必須確認對方車輛，且需有報警紀錄（警察處理後開立三聯單）方可理賠。'),
+            _buildListTile('適用對象', '車齡較老（5年以上）、預算有限，或駕駛技術純熟、僅擔心被他人撞到的車主。'),
+            _buildListTile('優缺點', '保費最便宜(1~2萬)，但若自行撞牆、撞電線桿或找不到肇事車輛時，不予理賠。'),
+          ],
+        ),
+        
+        const SizedBox(height: 16),
+        
+        _buildExpansionCard(
+          title: '超額責任險',
+          subtitle: '俗稱「超跑險」',
+          children: [
+            _buildListTile('保障性質', '屬於「附加險」，必須先投保「第三人責任險」後才能加保。'),
+            _buildListTile('核心功能', '當車禍發生，賠償對方的體傷或財損超過第三人責任險的保額時，由超額險補足差額。'),
+            _buildListTile('適用情境', '不慎撞到勞斯萊斯、法拉利等高價名車，或是造成嚴重人員傷亡，理賠金額動輒數百萬甚至上千萬時。'),
+            _buildListTile('建議保額', '建議至少投保 1,000 萬元，目前年保費僅約 1,000 至 2,000 元，CP值極高。'),
+            _buildListTile('為什麼超額險很重要？', '一般的第三人責任險財損保額通常僅有 20-50 萬，在路上隨便擦撞到進口車就可能不夠賠。超額險能以極低的成本，換取高額的保障，是現代駕駛必備的防護。'),
+          ],
+        ),
+        
+        const SizedBox(height: 24),
+
+      ],
     );
   }
 }
