@@ -18,6 +18,7 @@ class Vehicle {
   final Map<String, int> partsPrices; // e.g., {'bumper': 4500, 'headlight': 6000}
   final int reliabilityScore; // 1-100
   final List<String> imageUrls; // List of image URLs
+  final String? ownerId; // The ID of the user who added this vehicle
 
   const Vehicle({
     required this.id,
@@ -37,23 +38,37 @@ class Vehicle {
     this.partsPrices = const {},
     this.reliabilityScore = 0,
     this.imageUrls = const [],
+    this.ownerId,
   });
 
   // Factory constructor to create a Vehicle from JSON
   factory Vehicle.fromJson(Map<String, dynamic> json) {
+    String id;
+    if (json['id'] != null) {
+      id = json['id'].toString();
+    } else if (json['_id'] != null) {
+      id = json['_id'].toString();
+      // If it's MongoDB's ObjectId string representation like 'ObjectId("...")', we might want to clean it
+      if (id.startsWith('ObjectId("') && id.endsWith('")')) {
+        id = id.substring(10, id.length - 2);
+      }
+    } else {
+      id = DateTime.now().millisecondsSinceEpoch.toString();
+    }
+
     return Vehicle(
-      id: json['id'] as String,
-      brand: json['brand'] as String,
-      model: json['model'] as String,
-      price: json['price'] as int,
-      displacement: json['displacement'] as int,
-      horsepower: (json['horsepower'] as num).toDouble(),
-      torque: (json['torque'] as num).toDouble(),
-      avgFuelConsumption: (json['avgFuelConsumption'] as num).toDouble(),
-      transmission: json['transmission'] as String,
-      frontSuspension: json['frontSuspension'] as String,
-      rearSuspension: json['rearSuspension'] as String,
-      engineType: json['engineType'] as String,
+      id: id,
+      brand: json['brand'] as String? ?? 'Unknown',
+      model: json['model'] as String? ?? 'Unknown',
+      price: json['price'] as int? ?? 0,
+      displacement: json['displacement'] as int? ?? 0,
+      horsepower: (json['horsepower'] as num?)?.toDouble() ?? 0.0,
+      torque: (json['torque'] as num?)?.toDouble() ?? 0.0,
+      avgFuelConsumption: (json['avgFuelConsumption'] as num?)?.toDouble() ?? 0.0,
+      transmission: json['transmission'] as String? ?? 'Unknown',
+      frontSuspension: json['frontSuspension'] as String? ?? 'Unknown',
+      rearSuspension: json['rearSuspension'] as String? ?? 'Unknown',
+      engineType: json['engineType'] as String? ?? 'Unknown',
       category: json['category'] as String? ?? '轎車',
       maintenanceCost60k: json['maintenanceCost60k'] as int? ?? 0,
       partsPrices: (json['partsPrices'] as Map<String, dynamic>?)?.map(
@@ -61,6 +76,7 @@ class Vehicle {
           ) ?? const {},
       reliabilityScore: json['reliabilityScore'] as int? ?? 0,
       imageUrls: (json['imageUrls'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const [],
+      ownerId: json['ownerId'] as String?,
     );
   }
 
@@ -84,6 +100,7 @@ class Vehicle {
       'partsPrices': partsPrices,
       'reliabilityScore': reliabilityScore,
       'imageUrls': imageUrls,
+      'ownerId': ownerId,
     };
   }
 

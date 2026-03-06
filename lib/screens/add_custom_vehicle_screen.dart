@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/vehicle_model.dart';
 import '../providers/vehicle_provider.dart';
+import '../providers/auth_provider.dart';
 
 class AddCustomVehicleScreen extends StatefulWidget {
   final Vehicle? vehicleToEdit;
@@ -70,6 +71,9 @@ class _AddCustomVehicleScreenState extends State<AddCustomVehicleScreen> {
       // If editing, use existing ID, otherwise generate new one
       final id = widget.vehicleToEdit?.id ?? DateTime.now().toString();
 
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final userId = authProvider.currentUser?.id;
+
       final newVehicle = Vehicle(
         id: id,
         brand: _brand,
@@ -92,16 +96,17 @@ class _AddCustomVehicleScreenState extends State<AddCustomVehicleScreen> {
         },
         reliabilityScore: _reliabilityScore,
         imageUrls: _imageUrl.isNotEmpty ? [_imageUrl] : [],
+        ownerId: userId,
       );
 
       final provider = Provider.of<VehicleProvider>(context, listen: false);
       if (widget.vehicleToEdit != null) {
-        provider.updateVehicle(newVehicle);
+        provider.updateVehicle(newVehicle, userId: userId);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('車輛資訊已更新！')),
         );
       } else {
-        provider.addVehicle(newVehicle);
+        provider.addVehicle(newVehicle, userId: userId);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('已新增自訂車輛！')),
         );

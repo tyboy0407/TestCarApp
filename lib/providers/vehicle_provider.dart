@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // For rootBundle
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/vehicle_model.dart';
+import '../services/database_service.dart';
 
 class VehicleProvider with ChangeNotifier {
+  final DatabaseService _dbService = DatabaseService();
   List<Vehicle> _builtinVehicles = [];
   List<Vehicle> _customVehicles = [];
   bool _isLoading = false;
@@ -192,18 +194,28 @@ class VehicleProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fetchVehicles() async {
+  Future<void> fetchVehicles({String? userId}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
     
     try {
-      // Load built-in data from local assets
-      await _loadFromAssets();
-      print('Vehicle data initialized from local assets.');
+      // 1. Try to fetch from MongoDB with userId
+      final remoteVehicles = await _dbService.getVehicles(userId: userId);
+      if (remoteVehicles.isNotEmpty) {
+        _builtinVehicles = remoteVehicles;
+        print('Vehicle data fetched from MongoDB.');
+      } else {
+        // 2. Fallback to local assets if DB is empty
+        await _loadFromAssets();
+      }
     } catch (e) {
-      print('Local asset load failed: $e. Using fallback data.');
-      _builtinVehicles = [..._fallbackVehicles];
+      print('MongoDB fetch failed: $e. Using local assets/fallback.');
+      try {
+        await _loadFromAssets();
+      } catch (assetErr) {
+        _builtinVehicles = [..._fallbackVehicles];
+      }
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -222,28 +234,84 @@ class VehicleProvider with ChangeNotifier {
     }
   }
 
-  void addVehicle(Vehicle vehicle) {
-    _customVehicles.add(vehicle);
+  Future<void> addVehicle(Vehicle vehicle, {String? userId}) async {
+    // Attach current user as owner
+    final vehicleWithOwner = Vehicle(
+      id: vehicle.id,
+      brand: vehicle.brand,
+      model: vehicle.model,
+      price: vehicle.price,
+      displacement: vehicle.displacement,
+      horsepower: vehicle.horsepower,
+      torque: vehicle.torque,
+      avgFuelConsumption: vehicle.avgFuelConsumption,
+      transmission: vehicle.transmission,
+      frontSuspension: vehicle.frontSuspension,
+      rearSuspension: vehicle.rearSuspension,
+      engineType: vehicle.engineType,
+      category: vehicle.category,
+      maintenanceCost60k: vehicle.maintenanceCost60k,
+      partsPrices: vehicle.partsPrices,
+      reliabilityScore: vehicle.reliabilityScore,
+      imageUrls: vehicle.imageUrls,
+      ownerId: userId,
+    );
+
+    _customVehicles.add(vehicleWithOwner);
     _saveCustomVehicles();
     notifyListeners();
+    
+    try {
+      await _dbService.saveVehicle(vehicleWithOwner);
+    } catch (e) {
+      print('Error saving to MongoDB: $e');
+    }
   }
 
-  void updateVehicle(Vehicle vehicle) {
+  Future<void> updateVehicle(Vehicle vehicle, {String? userId}) async {
+    final vehicleWithOwner = vehicle.ownerId == null ? Vehicle(
+      id: vehicle.id,
+      brand: vehicle.brand,
+      model: vehicle.model,
+      price: vehicle.price,
+      displacement: vehicle.displacement,
+      horsepower: vehicle.horsepower,
+      torque: vehicle.torque,
+      avgFuelConsumption: vehicle.avgFuelConsumption,
+      transmission: vehicle.transmission,
+      frontSuspension: vehicle.frontSuspension,
+      rearSuspension: vehicle.rearSuspension,
+      engineType: vehicle.engineType,
+      category: vehicle.category,
+      maintenanceCost60k: vehicle.maintenanceCost60k,
+      partsPrices: vehicle.partsPrices,
+      reliabilityScore: vehicle.reliabilityScore,
+      imageUrls: vehicle.imageUrls,
+      ownerId: userId,
+    ) : vehicle;
+
     final customIndex = _customVehicles.indexWhere((v) => v.id == vehicle.id);
     if (customIndex >= 0) {
-      _customVehicles[customIndex] = vehicle;
+      _customVehicles[customIndex] = vehicleWithOwner;
       _saveCustomVehicles();
       notifyListeners();
+      try {
+        await _dbService.saveVehicle(vehicleWithOwner);
+      } catch (e) {
+        print('Error updating to MongoDB: $e');
+      }
       return;
     }
 
     final builtinIndex = _builtinVehicles.indexWhere((v) => v.id == vehicle.id);
     if (builtinIndex >= 0) {
-      // Moving modified built-in vehicle to custom list to persist changes locally
-      _builtinVehicles.removeAt(builtinIndex);
-      _customVehicles.add(vehicle);
-      _saveCustomVehicles();
+      _builtinVehicles[builtinIndex] = vehicleWithOwner;
       notifyListeners();
+      try {
+        await _dbService.saveVehicle(vehicleWithOwner);
+      } catch (e) {
+        print('Error updating to MongoDB: $e');
+      }
     }
   }
 

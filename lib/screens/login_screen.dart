@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  bool _isLoginMode = true; // Toggle between Login and Register
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
@@ -26,51 +27,77 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    // Simulate a slight delay to show the loading state more clearly in a "fast" app
-    await Future.delayed(const Duration(milliseconds: 500));
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    if (!mounted) return;
+    try {
+      if (_isLoginMode) {
+        // Login Logic
+        final success = await authProvider.login(
+            _usernameController.text, _passwordController.text);
 
-    final success = await Provider.of<AuthProvider>(context, listen: false)
-        .login(_usernameController.text, _passwordController.text);
+        if (!mounted) return;
 
-    if (!mounted) return;
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (!success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('登入失敗，請檢查帳號密碼'),
-          backgroundColor: Colors.red.shade400,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    } else {
-      // 登入成功，顯示載入進度對話框
-      if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false, // 禁止點擊外部關閉
-          builder: (context) => LoadingProgressDialog(
-            onLoading: () async {
-              // 觸發真實的資料獲取
-              // Defer calling fetchVehicles to avoid setState during build
-              WidgetsBinding.instance.addPostFrameCallback((_) async {
-                await Provider.of<VehicleProvider>(context, listen: false).fetchVehicles();
-                // onFinished will be called by LoadingProgressDialog after onLoading completes
-              });
+        if (!success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('登入失敗，請檢查帳號密碼'),
+              backgroundColor: Colors.red.shade400,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        } else {
+          // Login success: Show loading dialog and fetch data
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => LoadingProgressDialog(
+              onLoading: () async {
+              final userId = Provider.of<AuthProvider>(context, listen: false).currentUser?.id;
+              await Provider.of<VehicleProvider>(context, listen: false)
+                  .fetchVehicles(userId: userId);
             },
-            onFinished: () {
-              // 加載完成後跳轉
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const HomeScreen()),
-              );
-            },
+              onFinished: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const HomeScreen()),
+                );
+              },
+            ),
+          );
+        }
+      } else {
+        // Register Logic
+        await authProvider.register(
+            _usernameController.text, _passwordController.text);
+        
+        if (!mounted) return;
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('註冊成功！請登入'),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
           ),
         );
+        
+        setState(() {
+          _isLoginMode = true;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('發生錯誤: ${e.toString().replaceAll('Exception: ', '')}'),
+            backgroundColor: Colors.red.shade400,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -102,20 +129,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ).createShader(bounds),
-                    child: const Text(
-                      'Wheelie',
+                    child: Text(
+                      _isLoginMode ? 'Wheelie' : '註冊帳號',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 40, // 稍微加大字體讓漸層更明顯
+                      style: const TextStyle(
+                        fontSize: 40,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.5,
-                        color: Colors.white, // ShaderMask 會將顏色覆蓋，這裡設為白色
+                        color: Colors.white,
                       ),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Your best friend Wheelie',
+                    _isLoginMode ? 'Your best friend Wheelie' : '加入 Wheelie 的行列',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),
@@ -151,6 +178,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (value == null || value.isEmpty) {
                         return '請輸入密碼';
                       }
+                      if (!_isLoginMode && value.length < 6) {
+                        return '密碼長度需至少 6 位';
+                      }
                       return null;
                     },
                   ),
@@ -182,9 +212,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text(
-                              '登 入',
-                              style: TextStyle(
+                          : Text(
+                              _isLoginMode ? '登 入' : '註 冊',
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -197,12 +227,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 24),
                   TextButton(
                     onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('註冊功能開發中')),
-                      );
+                      setState(() {
+                        _isLoginMode = !_isLoginMode;
+                      });
                     },
                     child: Text(
-                      '還沒有帳號？立即註冊',
+                      _isLoginMode ? '還沒有帳號？立即註冊' : '已經有帳號？回登入頁',
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                   ),

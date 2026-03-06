@@ -1,31 +1,64 @@
 import 'package:flutter/material.dart';
+import '../services/database_service.dart';
+import '../models/user_model.dart';
+import 'package:uuid/uuid.dart';
 
 class AuthProvider with ChangeNotifier {
+  final DatabaseService _dbService = DatabaseService();
   bool _isLoggedIn = false;
-  String? _username;
+  User? _currentUser;
+  bool _isLoading = false;
 
   bool get isLoggedIn => _isLoggedIn;
-  String? get username => _username;
+  User? get currentUser => _currentUser;
+  String? get username => _currentUser?.username;
+  bool get isLoading => _isLoading;
 
-  // 模擬登入功能
+  // Login
   Future<bool> login(String username, String password) async {
-    // 模擬網路延遲
-    await Future.delayed(const Duration(seconds: 1));
+    _isLoading = true;
+    notifyListeners();
 
-    // 這裡可以加入真實的後端驗證邏輯
-    // 目前只要帳號密碼不為空即可登入
-    if (username.isNotEmpty && password.isNotEmpty) {
-      _isLoggedIn = true;
-      _username = username;
+    try {
+      final user = await _dbService.authenticateUser(username, password);
+      if (user != null) {
+        _isLoggedIn = true;
+        _currentUser = user;
+        notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Login error: $e');
+      return false;
+    } finally {
+      _isLoading = false;
       notifyListeners();
-      return true;
     }
-    return false;
+  }
+
+  // Register
+  Future<void> register(String username, String password) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final newUser = User(
+        id: const Uuid().v4(),
+        username: username,
+        password: password,
+        createdAt: DateTime.now(),
+      );
+      await _dbService.registerUser(newUser);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   void logout() {
     _isLoggedIn = false;
-    _username = null;
+    _currentUser = null;
     notifyListeners();
   }
 }
