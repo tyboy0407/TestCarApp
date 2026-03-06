@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:video_player/video_player.dart';
 
 class VBTITestScreen extends StatefulWidget {
   const VBTITestScreen({super.key});
@@ -8,18 +9,19 @@ class VBTITestScreen extends StatefulWidget {
 }
 
 class _VBTITestScreenState extends State<VBTITestScreen> {
-  bool _hasStarted = false; // 控制是否進入測驗
+  late VideoPlayerController _controller;
+  bool _hasStarted = false;
   int _currentQuestionIndex = 0;
   
   // Scores for each axis
-  int _pScore = 0; // Practical
-  int _eScore = 0; // Emotional
-  int _sScore = 0; // Safety
-  int _iScore = 0; // Innovation
-  int _bScore = 0; // Budget
-  int _hScore = 0; // High-quality
-  int _uScore = 0; // Urban
-  int _dScore = 0; // Discovery
+  int _pScore = 0; 
+  int _eScore = 0; 
+  int _sScore = 0; 
+  int _iScore = 0; 
+  int _bScore = 0; 
+  int _hScore = 0; 
+  int _uScore = 0; 
+  int _dScore = 0; 
 
   final List<Map<String, dynamic>> _questions = [
     {
@@ -80,6 +82,24 @@ class _VBTITestScreenState extends State<VBTITestScreen> {
     },
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.asset('assets/videos/highway.mp4')
+      ..initialize().then((_) {
+        _controller.setLooping(true);
+        _controller.setVolume(0.0); // 靜音
+        _controller.play();
+        setState(() {}); // 確保影片初始化後刷新 UI
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   void _answerQuestion(String axis) {
     setState(() {
       switch (axis) {
@@ -117,55 +137,75 @@ class _VBTITestScreenState extends State<VBTITestScreen> {
 
   Widget _buildIntroPage() {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF232526), Color(0xFF414345)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: Stack(
+        children: [
+          // 影片背景
+          if (_controller.value.isInitialized)
+            SizedBox.expand(
+              child: FittedBox(
+                fit: BoxFit.cover,
+                child: SizedBox(
+                  width: _controller.value.size.width,
+                  height: _controller.value.size.height,
+                  child: VideoPlayer(_controller),
+                ),
+              ),
+            )
+          else
+            Container(color: Colors.black), // 載入中背景色
+
+          // 深色濾鏡遮罩
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.5),
+            ),
           ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.psychology, size: 100, color: Colors.white),
-            const SizedBox(height: 32),
-            const Text(
-              'VBTI',
-              style: TextStyle(color: Colors.white, fontSize: 48, fontWeight: FontWeight.w900, letterSpacing: 8),
-            ),
-            const Text(
-              'Vehicle Buying Type Indicator',
-              style: TextStyle(color: Colors.white70, fontSize: 14, letterSpacing: 1.2),
-            ),
-            const SizedBox(height: 48),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
-                '透過 8 個簡單的問題，分析您的購車潛意識，找出最契合您的性格代碼與建議車款。',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 16, height: 1.6),
+
+          // 內容
+          SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.psychology, size: 100, color: Colors.white),
+                  const SizedBox(height: 32),
+                  const Text(
+                    'VBTI',
+                    style: TextStyle(color: Colors.white, fontSize: 48, fontWeight: FontWeight.w900, letterSpacing: 8),
+                  ),
+                  const Text(
+                    'Vehicle Buying Type Indicator',
+                    style: TextStyle(color: Colors.white70, fontSize: 14, letterSpacing: 1.2),
+                  ),
+                  const SizedBox(height: 48),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: Text(
+                      '透過 8 個簡單的問題，分析您的購車潛意識，找出最契合您的性格代碼與建議車款。',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 16, height: 1.6),
+                    ),
+                  ),
+                  const SizedBox(height: 64),
+                  ElevatedButton(
+                    onPressed: () => setState(() => _hasStarted = true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 20),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    ),
+                    child: const Text('開始測驗', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('先不用，謝謝', style: TextStyle(color: Colors.white54)),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 64),
-            ElevatedButton(
-              onPressed: () => setState(() => _hasStarted = true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 20),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-              ),
-              child: const Text('開始測驗', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('先不用，謝謝', style: TextStyle(color: Colors.white54)),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
