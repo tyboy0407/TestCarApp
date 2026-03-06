@@ -57,8 +57,10 @@ class _LoadingProgressDialogState extends State<LoadingProgressDialog>
 
     if (mounted) {
       await Future.delayed(const Duration(milliseconds: 300));
-      Navigator.of(context).pop();
-      widget.onFinished();
+      if (mounted) {
+        Navigator.of(context).pop();
+        widget.onFinished();
+      }
     }
   }
 

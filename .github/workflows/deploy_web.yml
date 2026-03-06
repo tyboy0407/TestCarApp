@@ -26,6 +26,10 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      # 建立虛擬的 .env 檔案，避免編譯失敗
+      - name: Create .env
+        run: cp .env.example .env
+
       # 編譯網頁版，並設定正確的 base-href (重要！)
       - name: Build Web
         run: flutter build web --release --base-href "/TestCarApp/"
