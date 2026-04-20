@@ -3,6 +3,11 @@
 目前的版本網站
 https://tyboy0407.github.io/TestCarApp/
 
+要先Run API平台
+https://testcar-api.onrender.com/
+DB平台
+https://www.mongodb.com/products/tools/compass
+
 
 ## Getting Started
 
